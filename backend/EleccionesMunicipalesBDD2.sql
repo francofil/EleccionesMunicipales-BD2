@@ -1,6 +1,6 @@
 
-CREATE DATABASE IF NOT EXISTS elecciones;
-USE elecciones;
+CREATE DATABASE IF NOT EXISTS eleccionesmunicipalesbdd2;
+USE eleccionesmunicipalesbdd2;
 
 -- Tabla Departamento
 CREATE TABLE Departamento (
@@ -158,3 +158,73 @@ CREATE TABLE Votante_Circuito_Eleccion (
 
 ALTER TABLE Circuito_Eleccion
 ADD COLUMN mesaCerrada BOOLEAN DEFAULT FALSE;
+
+
+-- CREACIÓN DE DATOS PARA FUNCIONALIDADES MÍNIMAS DEL BACKEND
+
+-- Departamento
+INSERT INTO Departamento (nombre) VALUES ('Montevideo');
+
+-- Comisaría
+INSERT INTO Comisaria (idDepartamento) VALUES (1);
+
+-- Establecimiento
+INSERT INTO Establecimiento (tipo) VALUES ('Liceo');
+
+-- Mesa
+INSERT INTO Mesa () VALUES (); -- id = 1
+INSERT INTO Mesa () VALUES (); -- id = 2
+
+-- Votantes
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento) VALUES
+('10000001', 'A000001', 'Juan', 'Pérez', '1990-01-01'),  -- agente
+('10000002', 'A000002', 'Ana', 'Gómez', '1985-01-01'),   -- presidente mesa
+('10000003', 'A000003', 'Luis', 'Rodríguez', '1980-01-01'), -- votante 1
+('10000004', 'A000004', 'Laura', 'Fernández', '1992-01-01'), -- votante 2
+('10000005', 'A000005', 'Mario', 'Silva', '1994-01-01');  -- candidato
+
+-- Agente (es un votante también)
+INSERT INTO Agente (ci, idComisaria) VALUES ('10000001', 1);
+
+-- Integrante de mesa
+INSERT INTO IntegranteMesa (ci, rol, organismo, idMesa) VALUES ('10000002', 'Presidente', 'MIDES', 1);
+
+-- Establecimiento - Agente
+INSERT INTO Establecimiento_Agente (idEstablecimiento, idAgente) VALUES (1, '10000001');
+
+-- Circuito
+INSERT INTO Circuito (
+    zona, tipo, accesible, direccion, listaCredenciales, idEstablecimiento,
+    ciAgente, idDepartamento, idMesa
+) VALUES (
+    'Centro', 'Ciudad', TRUE, 'Av. Italia 1234', 'A000003,A000004', 1,
+    '10000001', 1, 1
+); -- id = 1
+
+-- Elección
+INSERT INTO Eleccion (fecha, tipo) VALUES ('2025-07-11', 'Municipal'); -- id = 1
+
+-- Asociación Circuito - Elección
+INSERT INTO Circuito_Eleccion (idCircuito, idEleccion, mesaCerrada) VALUES (1, 1, FALSE);
+
+-- Papeleta
+INSERT INTO Papeleta (color, eleccion) VALUES ('Blanco', 1); -- id = 1
+
+-- Partido
+INSERT INTO Partido (idPapeleta, nombre, direccion, autoridades) VALUES
+(1, 'Partido Democrático', 'Calle Libertad 123', 'Presidente: Sosa, Vice: Méndez'); -- id = 1
+
+-- Lista
+INSERT INTO Lista (id, organo, departamento, idPartido) VALUES
+(1, 'Intendencia', 'Montevideo', 1);
+
+-- Candidato
+INSERT INTO Candidato (ci, idPartido) VALUES ('10000005', 1);
+
+-- Votos emitidos
+INSERT INTO Votante_Circuito_Eleccion (
+    ci, fecha, hora, estado, esObservado, fueEmitido, idEleccion, idCircuito
+) VALUES
+('10000003', '2025-07-11', '10:00:00', 'valido', FALSE, TRUE, 1, 1),
+('10000004', '2025-07-11', '10:15:00', 'blanco', FALSE, TRUE, 1, 1);
+
