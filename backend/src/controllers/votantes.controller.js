@@ -9,12 +9,12 @@ exports.getAll = async (req, res) => {
 // GET one
 exports.getOneCI = async (req, res) => {
   const [rows] = await pool.query('SELECT * FROM Votantes WHERE ci = ?', [req.params.ci]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No encontrado' });
+  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro votante con esa cedula de identidad' });
 };
 
 exports.getOneCC = async (req, res) => {
   const [rows] = await pool.query('SELECT * FROM Votantes WHERE credencial = ?', [req.params.credencial]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No encontrado' });
+  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro votante con esa credencial' });
 };
 // POST
 /*

@@ -1,4 +1,3 @@
-
 CREATE DATABASE IF NOT EXISTS eleccionesmunicipalesbdd2;
 USE eleccionesmunicipalesbdd2;
 
@@ -29,6 +28,7 @@ CREATE TABLE Papeleta (
     eleccion INT,
     FOREIGN KEY (eleccion) REFERENCES Eleccion(id)
 );
+
 -- Tabla Partido
 CREATE TABLE Partido (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -38,11 +38,12 @@ CREATE TABLE Partido (
     autoridades TEXT,
     FOREIGN KEY (idPapeleta) REFERENCES Papeleta(id)
 );
+
 -- Subclases de Papeleta
 CREATE TABLE Lista (
     id INT PRIMARY KEY,
     organo VARCHAR(50),
-    departamento VARCHAR(100), -- Puede ser cambiado a FK(Departamento.id) si se desea más normalización
+    departamento VARCHAR(100),
     idPartido INT,
     FOREIGN KEY (id) REFERENCES Papeleta(id),
     FOREIGN KEY (idPartido) REFERENCES Partido(id)
@@ -57,8 +58,6 @@ CREATE TABLE Plebiscito (
     id INT PRIMARY KEY,
     FOREIGN KEY (id) REFERENCES Papeleta(id)
 );
-
-
 
 -- Tabla Votante
 CREATE TABLE Votante (
@@ -126,6 +125,7 @@ CREATE TABLE Circuito (
 CREATE TABLE Circuito_Eleccion (
     idCircuito INT,
     idEleccion INT,
+    mesaCerrada BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (idCircuito, idEleccion),
     FOREIGN KEY (idCircuito) REFERENCES Circuito(id),
     FOREIGN KEY (idEleccion) REFERENCES Eleccion(id)
@@ -156,40 +156,35 @@ CREATE TABLE Votante_Circuito_Eleccion (
     FOREIGN KEY (idCircuito) REFERENCES Circuito(id)
 );
 
-ALTER TABLE Circuito_Eleccion
-ADD COLUMN mesaCerrada BOOLEAN DEFAULT FALSE;
+-- DATOS DE EJEMPLO PARA FUNCIONALIDADES MÍNIMAS
 
-
--- CREACIÓN DE DATOS PARA FUNCIONALIDADES MÍNIMAS DEL BACKEND
-
--- Departamento
+-- Departamentos
 INSERT INTO Departamento (nombre) VALUES ('Montevideo');
 
--- Comisaría
+-- Comisarías
 INSERT INTO Comisaria (idDepartamento) VALUES (1);
 
--- Establecimiento
+-- Establecimientos
 INSERT INTO Establecimiento (tipo) VALUES ('Liceo');
 
--- Mesa
+-- Mesas
 INSERT INTO Mesa () VALUES (); -- id = 1
-INSERT INTO Mesa () VALUES (); -- id = 2
 
 -- Votantes
 INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento) VALUES
-('10000001', 'A000001', 'Juan', 'Pérez', '1990-01-01'),  -- agente
-('10000002', 'A000002', 'Ana', 'Gómez', '1985-01-01'),   -- presidente mesa
-('10000003', 'A000003', 'Luis', 'Rodríguez', '1980-01-01'), -- votante 1
-('10000004', 'A000004', 'Laura', 'Fernández', '1992-01-01'), -- votante 2
-('10000005', 'A000005', 'Mario', 'Silva', '1994-01-01');  -- candidato
+('10000001', 'A000001', 'Juan', 'Pérez', '1990-01-01'),
+('10000002', 'A000002', 'Ana', 'Gómez', '1985-01-01'),
+('10000003', 'A000003', 'Luis', 'Rodríguez', '1980-01-01'),
+('10000004', 'A000004', 'Laura', 'Fernández', '1992-01-01'),
+('10000005', 'A000005', 'Mario', 'Silva', '1994-01-01');
 
--- Agente (es un votante también)
+-- Agente
 INSERT INTO Agente (ci, idComisaria) VALUES ('10000001', 1);
 
 -- Integrante de mesa
 INSERT INTO IntegranteMesa (ci, rol, organismo, idMesa) VALUES ('10000002', 'Presidente', 'MIDES', 1);
 
--- Establecimiento - Agente
+-- Relación Establecimiento - Agente
 INSERT INTO Establecimiento_Agente (idEstablecimiento, idAgente) VALUES (1, '10000001');
 
 -- Circuito
@@ -199,20 +194,20 @@ INSERT INTO Circuito (
 ) VALUES (
     'Centro', 'Ciudad', TRUE, 'Av. Italia 1234', 'A000003,A000004', 1,
     '10000001', 1, 1
-); -- id = 1
+);
 
 -- Elección
-INSERT INTO Eleccion (fecha, tipo) VALUES ('2025-07-11', 'Municipal'); -- id = 1
+INSERT INTO Eleccion (fecha, tipo) VALUES ('2025-07-11', 'Municipal');
 
 -- Asociación Circuito - Elección
 INSERT INTO Circuito_Eleccion (idCircuito, idEleccion, mesaCerrada) VALUES (1, 1, FALSE);
 
 -- Papeleta
-INSERT INTO Papeleta (color, eleccion) VALUES ('Blanco', 1); -- id = 1
+INSERT INTO Papeleta (color, eleccion) VALUES ('Blanco', 1);
 
 -- Partido
 INSERT INTO Partido (idPapeleta, nombre, direccion, autoridades) VALUES
-(1, 'Partido Democrático', 'Calle Libertad 123', 'Presidente: Sosa, Vice: Méndez'); -- id = 1
+(1, 'Partido Democrático', 'Calle Libertad 123', 'Presidente: Sosa, Vice: Méndez');
 
 -- Lista
 INSERT INTO Lista (id, organo, departamento, idPartido) VALUES
@@ -227,4 +222,3 @@ INSERT INTO Votante_Circuito_Eleccion (
 ) VALUES
 ('10000003', '2025-07-11', '10:00:00', 'valido', FALSE, TRUE, 1, 1),
 ('10000004', '2025-07-11', '10:15:00', 'blanco', FALSE, TRUE, 1, 1);
-
