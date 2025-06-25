@@ -3,13 +3,16 @@ const pool = require('./db/db.js'); // <
 const app = express();
 require('dotenv').config();
 
+//llamada a routes
 const votantesRoutes = require('./routes/votantes.routes.js');
 
+//use de los gets
 app.use(express.json());
-app.use('/api/votantes', votantesRoutes);
+app.use('/votantes', votantesRoutes);
 
 const PORT = process.env.PORT || 3000;
 
+//prueba conexion bdd
 (async () => {
   try {
     await pool.query('SELECT 1');
