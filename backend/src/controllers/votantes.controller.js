@@ -7,20 +7,34 @@ exports.getAll = async (req, res) => {
 };
 
 // GET one
-exports.getOne = async (req, res) => {
+exports.getOneCI = async (req, res) => {
   const [rows] = await pool.query('SELECT * FROM Votantes WHERE ci = ?', [req.params.ci]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No encontrado' });
+  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro votante con esa cedula de identidad' });
 };
 
+exports.getOneCC = async (req, res) => {
+  const [rows] = await pool.query('SELECT * FROM Votantes WHERE credencial = ?', [req.params.credencial]);
+  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro votante con esa credencial' });
+};
 // POST
+/*
+{
+  "ci": "12345678",
+  "credencial": "credencial123",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "fecha_nacimiento": "2000-04-15"
+}
+ */
 exports.create = async (req, res) => {
-  const { ci, nombre, apellido, fecha_nacimiento } = req.body;
+  const { ci, credencial, nombre, apellido, fecha_nacimiento } = req.body;
   await pool.query(
-    'INSERT INTO Votantes (ci, nombre, apellido, fecha_nacimiento) VALUES (?, ?, ?, ?)',
-    [ci, nombre, apellido, fecha_nacimiento]
+    'INSERT INTO Votantes (ci, credencial, nombre, apellido, fecha_nacimiento) VALUES (?, ?, ?, ?, ?)',
+    [ci, credencial, nombre, apellido, fecha_nacimiento]
   );
   res.status(201).json({ message: 'Votante creado' });
 };
+
 
 // PUT
 exports.update = async (req, res) => {
