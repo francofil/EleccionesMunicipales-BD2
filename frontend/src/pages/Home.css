@@ -1,0 +1,104 @@
+.home-container {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #f8f9fa;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.logo-sidebar {
+  width: 50px;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: gray;
+  margin-bottom: 1rem;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.6rem;
+  border: none;
+  background-color: #e3f2fd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background-color: #bbdefb;
+}
+
+.mesa-actions {
+  margin-top: 1rem;
+}
+
+.btn-abrir,
+.btn-cerrar {
+  display: block;
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-abrir {
+  background-color: #4caf50;
+}
+
+.btn-cerrar {
+  background-color: #f44336;
+}
+
+footer {
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: auto;
+  color: #555;
+}
+
+/* Main Panel */
+.main-panel {
+  flex: 1;
+  padding: 2rem;
+  background-color: #ffffff;
+  position: relative;
+}
+
+.top-bar {
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.welcome {
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.welcome h2 {
+  margin-bottom: 1rem;
+}
