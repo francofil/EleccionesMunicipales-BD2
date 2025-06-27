@@ -8,6 +8,7 @@ exports.getOne = async (req, res) => {
 // añadir votantes a un circuito de una eleccion
 exports.create = async (req, res) => {
   const { credencial, idEleccion, idCircuito } = req.body;
+  
   const [rows] = await pool.query('INSERT INTO ListaVotacion_Circuito_Eleccion ( idEleccion, idCircuito, credencial) VALUES (?, ?, ?)', [idEleccion, idCircuito, credencial]);
   res.json(rows);
 }

@@ -1,16 +1,8 @@
 const pool = require('../db/db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-// POST
-/*
-{
-  "ci": "12345678",
-  "credencial": "credencial123",
-  "nombre": "Juan",
-  "apellido": "Pérez",
-  "fecha_nacimiento": "2000-04-15"
-}
- */
-exports.create = async (req, res) => {
+exports.register = async (req, res) => {
   const {
     ci,
     username,
@@ -39,7 +31,7 @@ exports.create = async (req, res) => {
 };
 
 //POST
-exports.create = async (req, res) => {
+exports.login = async (req, res) => {
   const {
     username,
     password
@@ -58,12 +50,16 @@ exports.create = async (req, res) => {
 
     if (!valido) {
       return res.status(401).json({ error: 'Contraseña incorrecta' });
-    } else {
+    } 
+    
+    const token = jwt.sign(
+      { ci: user.ci, rol: user.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '30m' }
+    );
 
-    }
 
-
-    res.status(201).json({ message: 'Login exitoso', id: result.insertId });
+    res.status(201).json({ message: 'Login exitoso', token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
