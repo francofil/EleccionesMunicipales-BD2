@@ -256,3 +256,9 @@ INSERT INTO Votante_Circuito_Eleccion (
 ) VALUES
 ('A000001', '2025-07-11', '10:00:00', FALSE, TRUE, 1, 1),
 ('A000002', '2025-07-11', '10:15:00', FALSE, TRUE, 1, 1);
+
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento) VALUES
+('12345678', 'A123456', 'admin', 'admin', '2000-01-01') -- Para insertar el admin este tiene que ser un votante
+
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento) VALUES
+('10000000', 'A100000', 'presidente', 'presidente', '2000-01-01'); -- Para insertar el presidente tiene que ser un votante antes

@@ -15,16 +15,11 @@ exports.register = async (req, res) => {
   }
   try {
     const hashed = await bcrypt.hash(password, 10);
-    const [result] = await pool.query(`INSERT INTO Circuito (ci, username, password, rol) VALUES (?, ?, ?, ?)`,
+    const [result] = await pool.query(`INSERT INTO Usuario (ci, username, password, rol) VALUES (?, ?, ?, ?)`,
       [ci, username, hashed, rol]
     );
 
-    const token = jwt.sign(
-      { ci: user.ci, rol: user.rol },
-      process.env.JWT_SECRET,
-      { expiresIn: '2h' }
-    );
-    res.status(201).json({ message: 'Circuito creado', toke, });
+    res.status(201).json({ message: 'Usuario creado' });
   } catch (error) {
     res.status(500).json({ error: error.message }); 
   }
@@ -36,17 +31,17 @@ exports.login = async (req, res) => {
     username,
     password
   } = req.body;
-
   try {
-    const [contraseña] = await pool.query(`SELECT contraseña FROM Usuario WHERE username = ?`,
+    const [rows] = await pool.query(`SELECT * FROM Usuario WHERE username = ?`,
       [username]
     );
 
-    if (contraseña.length === 0) {
+    if (rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    valido = await bcrypt.compare(password, contraseña[0]);
+    const user = rows[0];
+    valido = await bcrypt.compare(password, user.password);
 
     if (!valido) {
       return res.status(401).json({ error: 'Contraseña incorrecta' });

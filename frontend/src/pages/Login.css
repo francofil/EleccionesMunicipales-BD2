@@ -74,3 +74,10 @@ p {
 .login-button:hover {
   background: linear-gradient(to right, #0094ff, #40a6ff);
 }
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}

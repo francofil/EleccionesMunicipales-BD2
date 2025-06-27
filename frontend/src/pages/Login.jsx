@@ -1,23 +1,18 @@
-import { useNavigate } from 'react-router-dom';
+
+import {useState} from 'react'
 import './Login.css';
+import { useLogin } from '../hooks/useLogin'
 
-export default function Login() {
+export default function Login() { 
+  const { login, loading, error } = useLogin();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-    const navigate = useNavigate();
-
-  function handleLogin(e) {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    await login({ username, password });
 
-    const user = document.getElementById('username').value;
-    const pass = document.getElementById('password').value;
-
-    // Simulación de validación simple
-    if (user === 'presidente' && pass === '1234') {
-      navigate('/inicio'); // Redirige al home
-    } else {
-      alert('Credenciales inválidas');
-    }
-  }
+  };
 
   return (
     <div className="login-container">
@@ -32,16 +27,17 @@ export default function Login() {
         <form onSubmit={handleLogin}>
             <div className="input-group">
                 <label htmlFor="username">Nombre de usuario</label>
-                <input type="text" id="username" placeholder="Ingrese su nombre de usuario." />
+                <input type="text" id="username" placeholder="Ingrese su nombre de usuario." value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
             <div className="input-group">
                 <label htmlFor="password">Contraseña</label>
-                <input type="password" id="password" placeholder="Ingrese su contraseña." />
+                <input type="password" id="password" placeholder="Ingrese su contraseña." value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
             <div className="forgot-password">
                 ¿Olvidaste tu contraseña? <a href="#">Recuperar.</a>
             </div>
-            <button type="submit" className="login-button">Iniciar sesión</button>
+            <button type="submit" className="login-button" disabled={loading}>{loading ? 'Cargando...' : 'Iniciar sesión'}</button>
+            {error && <p className="error-message">El nombre de usuario o contraseña son incorrecto</p>}
         </form>
       </div>
     </div>
