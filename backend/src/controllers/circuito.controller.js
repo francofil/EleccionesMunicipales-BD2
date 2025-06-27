@@ -28,9 +28,7 @@ exports.create = async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      `INSERT INTO Circuito 
-      (zona, tipo, accesible, direccion, idEstablecimiento, ciAgente, idDepartamento, idMesa)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO Circuito (zona, tipo, accesible, direccion, idEstablecimiento, ciAgente, idDepartamento, idMesa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [zona, tipo, accesible, direccion, idEstablecimiento, ciAgente, idDepartamento, idMesa]
     );
 
