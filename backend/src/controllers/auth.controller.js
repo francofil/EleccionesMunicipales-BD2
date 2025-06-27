@@ -1,21 +1,5 @@
 const pool = require('../db/db');
 
-// GET all
-exports.getAllPresidentes = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Users WHERE tipo = "Presidente"');
-  res.json(rows);
-};
-
-// GET one
-exports.getOneCI = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Users WHERE ci = ?', [req.params.ci]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro presidente con esa cedula de identidad' });
-};
-
-exports.getOneCC = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Users WHERE credencial = ?', [req.params.credencial]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro presidente con esa credencial' });
-};
 // POST
 /*
 {
@@ -27,27 +11,61 @@ exports.getOneCC = async (req, res) => {
 }
  */
 exports.create = async (req, res) => {
-  const { ci, credencial, nombre, apellido, tipo } = req.body;
-  await pool.query(
-    'INSERT INTO Users (ci, credencial, nombre, apellido, tipo) VALUES (?, ?, ?, ?, "Presidente")',
-    [ci, credencial, nombre, apellido, tipo]
-  );
-  res.status(201).json({ message: 'Presidente creado' });
+  const {
+    ci,
+    username,
+    password,
+    rol
+  } = req.body;
+
+  if (rol !== 'admin' && rol !== 'presidente') {
+    return res.status(400).json({ error: 'Rol inválido. Debe ser "admin" o "presidente"' });
+  }
+  try {
+    const hashed = await bcrypt.hash(password, 10);
+    const [result] = await pool.query(`INSERT INTO Circuito (ci, username, password, rol) VALUES (?, ?, ?, ?)`,
+      [ci, username, hashed, rol]
+    );
+
+    const token = jwt.sign(
+      { ci: user.ci, rol: user.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+    res.status(201).json({ message: 'Circuito creado', toke, });
+  } catch (error) {
+    res.status(500).json({ error: error.message }); 
+  }
 };
 
+//POST
+exports.create = async (req, res) => {
+  const {
+    username,
+    password
+  } = req.body;
 
-// PUT
-exports.update = async (req, res) => {
-  const { nombre, apellido } = req.body;
-  await pool.query(
-    'UPDATE Users SET nombre = ?, apellido = ? WHERE ci = ?',
-    [nombre, apellido, req.params.ci]
-  );
-  res.json({ message: 'Presidente actualizado' });
+  try {
+    const [contraseña] = await pool.query(`SELECT contraseña FROM Usuario WHERE username = ?`,
+      [username]
+    );
+
+    if (contraseña.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    valido = await bcrypt.compare(password, contraseña[0]);
+
+    if (!valido) {
+      return res.status(401).json({ error: 'Contraseña incorrecta' });
+    } else {
+
+    }
+
+
+    res.status(201).json({ message: 'Login exitoso', id: result.insertId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-// DELETE
-exports.remove = async (req, res) => {
-  await pool.query('DELETE FROM Users WHERE ci = ?', [req.params.ci]);
-  res.json({ message: 'Presidente eliminado' });
-};
