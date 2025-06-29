@@ -1,14 +1,26 @@
 const express = require('express');
 const pool = require('./db/db.js'); // <
 const app = express();
+const cors = require('cors');
 require('dotenv').config();
-
-//llamada a routes
-const votantesRoutes = require('./routes/votantes.routes.js');
 
 //use de los gets
 app.use(express.json());
+//Sacamos problemas de cors, habilitamos llamadas a la api desde otro origen
+app.use(cors());
+
+
+//llamada a routes
+const votantesRoutes = require('./routes/votantes.routes.js');
+const authRoutes = require('./routes/auth.router.js');
+const circuitoRoutes = require('./routes/circuito.router.js')
+const eleccionCircuitoRoutes = require('./routes/eleccionCircuito.router.js')
+
+
 app.use('/votantes', votantesRoutes);
+app.use('/auth', authRoutes);
+app.use('/circuito', circuitoRoutes);
+app.use('/eleccionCircuito',  eleccionCircuitoRoutes);
 
 const PORT = process.env.PORT || 3000;
 
