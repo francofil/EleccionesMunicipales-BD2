@@ -30,7 +30,7 @@ export default function Home() {
           <span className="icon">👤</span>
         </div>
         <div className="welcome">
-          <h2>Bienvenido al administrador de la comisión receptora de votos</h2>
+          <h2>Bienvenido al presidente de la comisión receptora de votos</h2>
           <h3>Mesa Nº {mesaId}</h3>
         </div>
       </main>
