@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/eleccionCircuito.controller.js');
-const { authenticateToken, authorizeRoles } = require('../middlewares/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Obtener estado del circuito en una elección (acceso general)
 router.get('/estado/:idEleccion/:idCircuito', authenticateToken, controller.obtenerCircuitoDeEleccion);

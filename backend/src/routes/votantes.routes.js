@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const votanteController = require('../controllers/votantes.controller.js');
-const { authenticateToken, authorizeRoles } = require('../middlewares/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Obtener todos los votantes (requiere login)
 router.get('/votantes', authenticateToken, votanteController.getAll);
