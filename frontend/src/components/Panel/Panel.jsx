@@ -1,3 +1,4 @@
+import CircuitosPage from '../../pages/CircuitosPage/CircuitosPage';
 import CircuitosList from '../CircuitosList/CircuitosList';
 import EleccionesList from '../CircuitosList/CircuitosList';
 import './Panel.css';
@@ -6,7 +7,7 @@ export default function Panel({  title, active }) {
     const renderSection = () => {
     switch (active) {
       case 'circuitos':
-        return <CircuitosList />;
+        return <CircuitosPage />;
 
       case 'elecciones':
         return <EleccionesList />;
