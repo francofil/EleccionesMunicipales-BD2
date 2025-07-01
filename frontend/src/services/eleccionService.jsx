@@ -1,9 +1,9 @@
 const baseUrl = "http://localhost:3000";
 
-export async function fetchCircuitos() {
+export async function fetchElecciones() {
   const token = localStorage.getItem('token');
 
-  const res = await fetch(`${baseUrl}/circuito`, {
+  const res = await fetch(`${baseUrl}/eleccion`, {
     headers: {
       'Authorization': `Bearer ${token}`,
     },
@@ -14,19 +14,19 @@ export async function fetchCircuitos() {
     throw new Error(`Error ${res.status}: ${errorText}`);
   }
 
-  return await res.json(); // Lista de circuitos
+  return await res.json();
 }
 
-export async function createCircuito(circuitoData) {
+export async function createEleccion(eleccionData) {
   const token = localStorage.getItem('token');
 
-  const res = await fetch(baseUrl + '/circuito', {
+  const res = await fetch(baseUrl + '/eleccion', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
-    body: JSON.stringify(circuitoData)
+    body: JSON.stringify(eleccionData)
   });
 
   if (!res.ok) {
@@ -34,13 +34,13 @@ export async function createCircuito(circuitoData) {
     throw new Error(`Error ${res.status}: ${error}`);
   }
 
-  return await res.json(); // { message: 'Circuito creado', id }
+  return await res.json();
 }
 
-export async function deleteCircuito(id) {
+export async function deleteEleccion(id) {
   const token = localStorage.getItem('token');
 
-  const res = await fetch(`${baseUrl}/circuito/${id}`, {
+  const res = await fetch(`${baseUrl}/eleccion/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`
@@ -52,12 +52,13 @@ export async function deleteCircuito(id) {
     throw new Error(`Error ${res.status}: ${error}`);
   }
 
-  return await res.json(); // { message: 'Circuito eliminado' }
+  return await res.json();
 }
-export async function updateCircuito(id, updatedData) {
+
+export async function updateEleccion(id, updatedData) {
   const token = localStorage.getItem('token');
 
-  const res = await fetch(`${baseUrl}/circuito/${id}`, {
+  const res = await fetch(`${baseUrl}/eleccion/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -71,17 +72,5 @@ export async function updateCircuito(id, updatedData) {
     throw new Error(`Error ${res.status}: ${error}`);
   }
 
-  return await res.json(); // { message: 'Circuito actualizado' }
+  return await res.json();
 }
-
-export async function fetchVotantesByCircuito(id) {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${baseUrl}/circuito/${id}/votantes`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) throw new Error(await res.text());
-  return res.json(); // arreglo de votantes
-}
-
-

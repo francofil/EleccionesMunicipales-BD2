@@ -1,23 +1,32 @@
 import { useEffect, useState } from 'react';
 import { fetchCircuitos } from '../services/circuitoService';
 
+/**
+ * Hook que obtiene la lista de circuitos desde el backend y
+ * ofrece el setter para poder actualizarla sin recargar la página.
+ */
 export function useCircuitos() {
   const [circuitos, setCircuitos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState(null);
 
   useEffect(() => {
+    let cancelado = false;          // evita setState si el componente se desmonta
+
     (async () => {
       try {
         const data = await fetchCircuitos();
-        setCircuitos(data);
+        if (!cancelado) setCircuitos(data);
       } catch (err) {
-        setError(err.message);
+        if (!cancelado) setError(err.message);
       } finally {
-        setLoading(false);
+        if (!cancelado) setLoading(false);
       }
     })();
+
+    return () => { cancelado = true; };
   }, []);
 
-  return { circuitos, loading, error };
+  /* ── devolvemos también setCircuitos ── */
+  return { circuitos, setCircuitos, loading, error };
 }

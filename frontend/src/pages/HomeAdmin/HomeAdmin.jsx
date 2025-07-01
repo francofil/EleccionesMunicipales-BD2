@@ -1,10 +1,7 @@
 import './HomeAdmin.css';
-import SidebarAdmin from '../../components/SideBar/SideBar';
 import PanelAdmin from '../../components/Panel/Panel';
 import { useState } from 'react';
-import './HomeAdmin.css';
-
-
+import Sidebar from '../../components/Sidebar/Sidebar';
 export default function HomeAdmin() {
   const [active, setActive] = useState('bienvenida');
 
@@ -19,7 +16,7 @@ export default function HomeAdmin() {
   };
   return (
     <div className="homeadmin-container">
-      <SidebarAdmin setActive={setActive} />
+      <Sidebar setActive={setActive} rol="administrador" />
       <div className="main-content">
         <PanelAdmin active={active} title={titles[active]} />
       </div>

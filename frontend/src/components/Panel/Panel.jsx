@@ -1,6 +1,5 @@
 import CircuitosPage from '../../pages/CircuitosPage/CircuitosPage';
-import CircuitosList from '../CircuitosList/CircuitosList';
-import EleccionesList from '../CircuitosList/CircuitosList';
+import EleccionesPage from '../../pages/EleccionesPage/EleccionesPage';
 import './Panel.css';
 
 export default function Panel({  title, active }) {
@@ -10,7 +9,7 @@ export default function Panel({  title, active }) {
         return <CircuitosPage />;
 
       case 'elecciones':
-        return <EleccionesList />;
+        return <EleccionesPage />;
 
       /* case 'listas':
            return <ListasList />;  // y así sucesivamente
