@@ -1,53 +1,62 @@
 const pool = require('../db/db');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-// GET all
-exports.getAllPresidentes = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Users WHERE tipo = "Presidente"');
-  res.json(rows);
+exports.register = async (req, res) => {
+  const {
+    ci,
+    username,
+    password,
+    rol
+  } = req.body;
+
+  if (rol !== 'admin' && rol !== 'presidente') {
+    return res.status(400).json({ error: 'Rol inválido. Debe ser "admin" o "presidente"' });
+  }
+  try {
+    const hashed = await bcrypt.hash(password, 10);
+    const [result] = await pool.query(`INSERT INTO Usuario (ci, username, password, rol) VALUES (?, ?, ?, ?)`,
+      [ci, username, hashed, rol]
+    );
+
+    res.status(201).json({ message: 'Usuario creado' });
+  } catch (error) {
+    res.status(500).json({ error: error.message }); 
+  }
 };
 
-// GET one
-exports.getOneCI = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Users WHERE ci = ?', [req.params.ci]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro presidente con esa cedula de identidad' });
+//POST
+exports.login = async (req, res) => {
+  const {
+    username,
+    password
+  } = req.body;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM Usuario WHERE username = ?`,
+      [username]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const user = rows[0];
+    valido = await bcrypt.compare(password, user.password);
+
+    if (!valido) {
+      return res.status(401).json({ error: 'Contraseña incorrecta' });
+    } 
+    
+    const token = jwt.sign(
+      { ci: user.ci, rol: user.rol },
+      process.env.JWT_SECRET,
+      { expiresIn: '30m' }
+    );
+
+
+    res.status(201).json({ message: 'Login exitoso', token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-exports.getOneCC = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Users WHERE credencial = ?', [req.params.credencial]);
-  rows.length ? res.json(rows[0]) : res.status(404).json({ error: 'No se encontro presidente con esa credencial' });
-};
-// POST
-/*
-{
-  "ci": "12345678",
-  "credencial": "credencial123",
-  "nombre": "Juan",
-  "apellido": "Pérez",
-  "fecha_nacimiento": "2000-04-15"
-}
- */
-exports.create = async (req, res) => {
-  const { ci, credencial, nombre, apellido, tipo } = req.body;
-  await pool.query(
-    'INSERT INTO Users (ci, credencial, nombre, apellido, tipo) VALUES (?, ?, ?, ?, "Presidente")',
-    [ci, credencial, nombre, apellido, tipo]
-  );
-  res.status(201).json({ message: 'Presidente creado' });
-};
-
-
-// PUT
-exports.update = async (req, res) => {
-  const { nombre, apellido } = req.body;
-  await pool.query(
-    'UPDATE Users SET nombre = ?, apellido = ? WHERE ci = ?',
-    [nombre, apellido, req.params.ci]
-  );
-  res.json({ message: 'Presidente actualizado' });
-};
-
-// DELETE
-exports.remove = async (req, res) => {
-  await pool.query('DELETE FROM Users WHERE ci = ?', [req.params.ci]);
-  res.json({ message: 'Presidente eliminado' });
-};

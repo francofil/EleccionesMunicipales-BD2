@@ -1,13 +1,17 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
-import Home from './pages/Home';
+import HomePresidente from './pages/HomePresidente';
+import Register from './pages/Register';
+import HomeAdmin from './pages/HomeAdmin';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/inicio" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Register />} />
+        <Route path="/home" element={<HomePresidente />} />
+        <Route path="/home" element={<HomeAdmin />} />
       </Routes>
     </BrowserRouter>
   );
