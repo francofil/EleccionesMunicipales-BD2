@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const circuitoController = require('../controllers/circuito.controller');
-const { authenticateToken, authorizeRoles } = require('../middlewares/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Obtener todos los circuitos
 router.get('/', authenticateToken, circuitoController.getAll);

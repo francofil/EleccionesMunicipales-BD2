@@ -2,7 +2,7 @@ const pool = require('../db/db');
 
 // GET all
 exports.getAll = async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM Circuitos');
+  const [rows] = await pool.query('SELECT * FROM Circuito');
   res.json(rows);
 };
 
@@ -42,7 +42,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   const {zona, tipo, accesible, direccion } = req.body;
   await pool.query(
-    'UPDATE Circuitos SET zona = ?, tipo = ?, accesible = ?, direccion = ? WHERE id = ?',
+    'UPDATE Circuito SET zona = ?, tipo = ?, accesible = ?, direccion = ? WHERE id = ?',
     [zona, tipo, accesible, direccion, req.params.id]
   );
   res.json({ message: 'Circuito actualizado' });
@@ -50,7 +50,7 @@ exports.update = async (req, res) => {
 
 // DELETE
 exports.remove = async (req, res) => {
-  await pool.query('DELETE FROM Circuitos WHERE id = ?', [req.params.id]);
+  await pool.query('DELETE FROM Circuito WHERE id = ?', [req.params.id]);
   res.json({ message: 'Circuito eliminado' });
 };
 
