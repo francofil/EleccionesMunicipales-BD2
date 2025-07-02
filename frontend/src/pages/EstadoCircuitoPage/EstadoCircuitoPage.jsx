@@ -1,62 +1,107 @@
 import { useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import {
-  obtenerEstadoCircuito,
-  cambiarEstadoCircuito,
+  obtenerCircuitoEleccion,
+  cambiarEstadoMesa,
   obtenerVotantesHabilitados,
-  //agregarVotanteHabilitado,
-  verificarVotanteHabilitado
+  verificarVotanteHabilitado,
+  agregarVotanteHabilitado
 } from '../../services/eleccionCircuitoService';
 
-export default function EstadoCircuitoPage({ idEleccion, idCircuito }) {
-  const [estado, setEstado] = useState(null);
-  const [votantes, setVotantes] = useState([]);
+/* Página completa – ideal para operaciones extensas */
+export default function EstadoCircuitoPage() {
+  const { id } = useParams();                // idCircuito
+  const { state } = useLocation();           // { idEleccion }
+  const idEleccion = state?.idEleccion || 1; // fallback
+
+  const [estado, setEstado]         = useState(null);
+  const [habilitados, setHabilitados] = useState([]);
   const [credencial, setCredencial] = useState('');
-  const [verificacion, setVerificacion] = useState(null);
+  const [verif, setVerif]           = useState(null);
+  const [msg, setMsg]               = useState({ type:'', text:'' });
 
   useEffect(() => {
-    obtenerEstadoCircuito(idEleccion, idCircuito).then(data => setEstado(data.estado));
-    obtenerVotantesHabilitados(idEleccion, idCircuito).then(setVotantes);
-  }, [idEleccion, idCircuito]);
+    (async () => {
+      try {
+        setMsg({ type:'loading', text:'Cargando…' });
+        const est = await obtenerCircuitoEleccion(idEleccion, id);
+        const list= await obtenerVotantesHabilitados(idEleccion, id);
+        setEstado(est.mesaCerrada ? 'cerrado' : 'abierto');
+        setHabilitados(list);
+        setMsg({ type:'', text:'' });
+      } catch (e) {
+        setMsg({ type:'error', text:e.message });
+      }
+    })();
+  }, [idEleccion, id]);
 
   const toggleEstado = async () => {
-    const nuevoEstado = estado === 'abierto' ? 'cerrado' : 'abierto';
-    await cambiarEstadoCircuito(idEleccion, idCircuito, nuevoEstado);
-    setEstado(nuevoEstado);
+    try {
+      const nuevo = estado === 'abierto' ? 'cerrado' : 'abierto';
+      await cambiarEstadoMesa(idEleccion, id, { mesaCerrada: nuevo === 'cerrado' });
+      setEstado(nuevo);
+    } catch (e) { setMsg({ type:'error', text:e.message }); }
   };
 
   const handleVerificar = async () => {
+    setVerif(null);
     try {
-      const res = await verificarVotanteHabilitado(idEleccion, idCircuito, credencial);
-      setVerificacion(res);
+      const r = await verificarVotanteHabilitado(idEleccion, id, credencial);
+      setVerif({ ok:true, habilitado:r.habilitado });
     } catch (e) {
-      setVerificacion({ error: e.message });
+      setVerif({ ok:false, message:e.message });
+    }
+  };
+
+  const handleAgregar = async () => {
+    try {
+      await agregarVotanteHabilitado({ idEleccion, idCircuito:id, credencial });
+      const nueva = await obtenerVotantesHabilitados(idEleccion, id);
+      setHabilitados(nueva);
+      setMsg({ type:'success', text:'Votante agregado' });
+    } catch (e) {
+      setMsg({ type:'error', text:e.message });
     }
   };
 
   return (
-    <div>
-      <h2>Estado del circuito: {estado}</h2>
-      <button onClick={toggleEstado}>
-        {estado === 'abierto' ? 'Cerrar mesa' : 'Abrir mesa'}
-      </button>
+    <div style={{ padding:'1rem' }}>
+      <h1>Circuito #{id} – Elección {idEleccion}</h1>
 
-      <h3>Votantes habilitados</h3>
+      {msg.type && <p className={msg.type}>{msg.text}</p>}
+
+      {estado && (
+        <>
+          <p><strong>Estado:</strong> {estado}</p>
+          <button onClick={toggleEstado}>
+            {estado === 'abierto' ? 'Cerrar mesa' : 'Abrir mesa'}
+          </button>
+        </>
+      )}
+
+      <h2>Votantes habilitados ({habilitados.length})</h2>
       <ul>
-        {votantes.map(v => (
+        {habilitados.map(v => (
           <li key={v.credencial}>{v.credencial}</li>
         ))}
       </ul>
 
-      <h3>Verificar credencial</h3>
-      <input value={credencial} onChange={e => setCredencial(e.target.value)} />
+      <h3>Verificar / agregar credencial</h3>
+      <input
+        value={credencial}
+        onChange={e => setCredencial(e.target.value)}
+        placeholder="Credencial"
+      />
       <button onClick={handleVerificar}>Verificar</button>
-      {verificacion && (
-        <p>
-          {verificacion.habilitado
-            ? '✅ Está habilitado'
-            : verificacion.error
-              ? `❌ Error: ${verificacion.error}`
-              : '❌ No está habilitado'}
+      <button onClick={handleAgregar}>Agregar</button>
+
+      {verif && (
+        <p className={verif.ok && verif.habilitado ? 'success' : 'error'}>
+          {verif.ok
+            ? verif.habilitado
+              ? '✅ Ya habilitado'
+              : '❌ No habilitado aún'
+            : `❌ ${verif.message}`}
         </p>
       )}
     </div>

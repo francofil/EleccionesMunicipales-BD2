@@ -1,0 +1,14 @@
+.modal-overlay{
+  position:fixed; inset:0; display:flex; justify-content:center; align-items:center;
+  background:#0008; z-index:1000;
+}
+.modal-card{
+  background:#fff; padding:2rem; border-radius:8px; width:320px; max-width:90%;
+  box-shadow:0 4px 12px rgba(0,0,0,.3); position:relative; font-family:sans-serif;
+}
+.close{position:absolute; top:8px; right:8px; border:none; background:none; font-size:1.2rem; cursor:pointer;}
+.loading{color:#555;}
+.error{color:#d33;}
+.success{color:#090;}
+.verif-box{display:flex; gap:0.5rem; margin-top:0.5rem;}
+.verif-box input{flex:1; padding:0.3rem;}
