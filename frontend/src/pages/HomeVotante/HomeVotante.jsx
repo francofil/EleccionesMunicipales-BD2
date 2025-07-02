@@ -3,6 +3,7 @@ import Panel from '../../components/Panel/Panel';
 import { useState , useEffect } from 'react';
 import './HomeVotante.css';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function HomeVotante() {
@@ -11,6 +12,7 @@ export default function HomeVotante() {
   const [estadoVoto, setEstadoVoto] = useState(null); // { fueEmitido: true/false, esObservado: true/false }
   const [estadoMesa, setEstadoMesa] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   
   const titles = {
@@ -91,7 +93,7 @@ export default function HomeVotante() {
           estadoVoto?.fueEmitido ? (
             <p>Ya has emitido tu voto.</p>
           ) : (
-            <button onClick={() => alert('Aquí va la lógica para emitir el voto')}>
+            <button onClick={() => navigate('/votacion')}>
               Emitir mi voto
             </button>
           )
