@@ -7,27 +7,29 @@ import {
   verificarVotanteHabilitado,
   agregarVotanteHabilitado
 } from '../../services/eleccionCircuitoService';
+import './EstadoCircuitoPage.css';
 
-/* Página completa – ideal para operaciones extensas */
 export default function EstadoCircuitoPage() {
-  const { id } = useParams();                // idCircuito
-  const { state } = useLocation();           // { idEleccion }
-  const idEleccion = state?.idEleccion || 1; // fallback
+  const { id }     = useParams();          // idCircuito
+  const { state }  = useLocation();        // { idEleccion }
+  const idEleccion = state?.idEleccion ?? 1;
 
-  const [estado, setEstado]         = useState(null);
-  const [habilitados, setHabilitados] = useState([]);
-  const [credencial, setCredencial] = useState('');
-  const [verif, setVerif]           = useState(null);
-  const [msg, setMsg]               = useState({ type:'', text:'' });
+  /* ─── estados ─── */
+  const [estado,       setEstado]       = useState(null);   // abierto | cerrado
+  const [habilitados,  setHabilitados]  = useState([]);
+  const [credencial,   setCredencial]   = useState('');
+  const [verif,        setVerif]        = useState(null);   // { ok, habilitado | message }
+  const [msg,          setMsg]          = useState({ type:'', text:'' }); // loading | error | success
 
+  /* ─── carga inicial ─── */
   useEffect(() => {
     (async () => {
       try {
         setMsg({ type:'loading', text:'Cargando…' });
-        const est = await obtenerCircuitoEleccion(idEleccion, id);
-        const list= await obtenerVotantesHabilitados(idEleccion, id);
+        const est   = await obtenerCircuitoEleccion(idEleccion, id);
+        const lista = await obtenerVotantesHabilitados(idEleccion, id);
         setEstado(est.mesaCerrada ? 'cerrado' : 'abierto');
-        setHabilitados(list);
+        setHabilitados(lista);
         setMsg({ type:'', text:'' });
       } catch (e) {
         setMsg({ type:'error', text:e.message });
@@ -35,14 +37,18 @@ export default function EstadoCircuitoPage() {
     })();
   }, [idEleccion, id]);
 
+  /* ─── abrir / cerrar mesa ─── */
   const toggleEstado = async () => {
     try {
       const nuevo = estado === 'abierto' ? 'cerrado' : 'abierto';
       await cambiarEstadoMesa(idEleccion, id, { mesaCerrada: nuevo === 'cerrado' });
       setEstado(nuevo);
-    } catch (e) { setMsg({ type:'error', text:e.message }); }
+    } catch (e) {
+      setMsg({ type:'error', text:e.message });
+    }
   };
 
+  /* ─── verificar credencial ─── */
   const handleVerificar = async () => {
     setVerif(null);
     try {
@@ -53,6 +59,7 @@ export default function EstadoCircuitoPage() {
     }
   };
 
+  /* ─── agregar habilitado ─── */
   const handleAgregar = async () => {
     try {
       await agregarVotanteHabilitado({ idEleccion, idCircuito:id, credencial });
@@ -64,39 +71,56 @@ export default function EstadoCircuitoPage() {
     }
   };
 
+  /* ─── render ─── */
   return (
-    <div style={{ padding:'1rem' }}>
+    <div className="estado-circuito-container">
       <h1>Circuito #{id} – Elección {idEleccion}</h1>
 
-      {msg.type && <p className={msg.type}>{msg.text}</p>}
+      {msg.type && (
+        <p className={
+          msg.type === 'success' ? 'mensaje-exito'
+          : msg.type === 'error' ? 'mensaje-error'
+          : 'loading'
+        }>
+          {msg.text}
+        </p>
+      )}
 
       {estado && (
         <>
-          <p><strong>Estado:</strong> {estado}</p>
-          <button onClick={toggleEstado}>
+          <p>
+            <strong>Estado:</strong>{' '}
+            <span className={`estado-tag ${estado}`}>{estado}</span>
+          </p>
+
+          <button className="boton" onClick={toggleEstado}>
             {estado === 'abierto' ? 'Cerrar mesa' : 'Abrir mesa'}
           </button>
         </>
       )}
 
       <h2>Votantes habilitados ({habilitados.length})</h2>
-      <ul>
+      <ul className="lista-habilitados">
         {habilitados.map(v => (
           <li key={v.credencial}>{v.credencial}</li>
         ))}
       </ul>
 
-      <h3>Verificar / agregar credencial</h3>
-      <input
-        value={credencial}
-        onChange={e => setCredencial(e.target.value)}
-        placeholder="Credencial"
-      />
-      <button onClick={handleVerificar}>Verificar</button>
-      <button onClick={handleAgregar}>Agregar</button>
+      <h3>Verificar/agregar credencial</h3>
+      <div className="verif-box">
+        <input
+          value={credencial}
+          onChange={e => setCredencial(e.target.value)}
+          placeholder="Credencial"
+        />
+        <button className="boton" onClick={handleVerificar}>Verificar</button>
+        <button className="boton" onClick={handleAgregar}>Agregar</button>
+      </div>
 
       {verif && (
-        <p className={verif.ok && verif.habilitado ? 'success' : 'error'}>
+        <p className={
+          verif.ok && verif.habilitado ? 'mensaje-exito' : 'mensaje-error'
+        }>
           {verif.ok
             ? verif.habilitado
               ? '✅ Ya habilitado'

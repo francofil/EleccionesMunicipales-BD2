@@ -9,18 +9,18 @@ import './CircuitoEstadoModal.css';
 import { Link } from 'react-router-dom';
 
 export default function CircuitoEstadoModal({ idEleccion, circuito, onClose }) {
-  const [estado,      setEstado]      = useState(null);      // 'abierto'|'cerrado'
+  const [estado, setEstado] = useState(null);      // 'abierto' | 'cerrado'
   const [habilitados, setHabilitados] = useState([]);
-  const [credencial,  setCredencial]  = useState('');
-  const [verif,       setVerif]       = useState(null);
-  const [msg,         setMsg]         = useState({ type: '', text: '' }); // loading|error|success
+  const [credencial, setCredencial] = useState('');
+  const [verif, setVerif] = useState(null);
+  const [msg, setMsg] = useState({ type: '', text: '' }); // loading | error | success
 
-  /* ── carga inicial ── */
+  // ───── CARGA INICIAL ─────
   useEffect(() => {
     (async () => {
       try {
         setMsg({ type: 'loading', text: 'Cargando…' });
-        const est  = await obtenerCircuitoEleccion(idEleccion, circuito.id);
+        const est = await obtenerCircuitoEleccion(idEleccion, circuito.id);
         const list = await obtenerVotantesHabilitados(idEleccion, circuito.id);
         setEstado(est.mesaCerrada ? 'cerrado' : 'abierto');
         setHabilitados(list);
@@ -31,7 +31,7 @@ export default function CircuitoEstadoModal({ idEleccion, circuito, onClose }) {
     })();
   }, [idEleccion, circuito.id]);
 
-  /* ── abrir / cerrar mesa ── */
+  // ───── CAMBIAR ESTADO MESA ─────
   const toggleEstado = async () => {
     try {
       setMsg({ type: 'loading', text: 'Actualizando…' });
@@ -46,7 +46,7 @@ export default function CircuitoEstadoModal({ idEleccion, circuito, onClose }) {
     }
   };
 
-  /* ── verificar credencial ── */
+  // ───── VERIFICAR VOTANTE ─────
   const handleVerificar = async () => {
     setVerif(null);
     try {
@@ -59,36 +59,39 @@ export default function CircuitoEstadoModal({ idEleccion, circuito, onClose }) {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-card">
-        <button className="close" onClick={onClose}>✖</button>
+      <div className="modal-card stylish">
+        <button className="close-btn" onClick={onClose}>✖</button>
 
-        <h2>Mesa / Circuito {circuito.zona}</h2>
+        <h2 className="modal-title">Circuito {circuito.zona}</h2>
 
-        {msg.type === 'loading' && <p className="loading">{msg.text}</p>}
-        {msg.type === 'error'   && <p className="error">{msg.text}</p>}
-        {msg.type === 'success' && <p className="success">{msg.text}</p>}
+        {msg.type && <p className={`msg ${msg.type}`}>{msg.text}</p>}
 
         {estado && (
           <>
-            <p><strong>Estado:</strong> {estado}</p>
-            <button onClick={toggleEstado}>
-              {estado === 'abierto' ? 'Cerrar mesa' : 'Abrir mesa'}
-            </button>
+            <div className="estado-info">
+              <p><strong>Estado:</strong> <span className={`estado-tag ${estado}`}>{estado}</span></p>
+              <button className="estado-btn" onClick={toggleEstado}>
+                {estado === 'abierto' ? 'Cerrar mesa' : 'Abrir mesa'}
+              </button>
+            </div>
 
-            <p><strong>Habilitados:</strong> {habilitados.length}</p>
+            <p className="habilitados-count">
+              <strong>Habilitados:</strong> {habilitados.length}
+            </p>
 
-            {/* Verificación rápida */}
+            {/* VERIFICACIÓN RÁPIDA */}
             <div className="verif-box">
               <input
+                className="input-credencial"
                 value={credencial}
                 onChange={e => setCredencial(e.target.value)}
                 placeholder="Credencial"
               />
-              <button onClick={handleVerificar}>Verificar</button>
+              <button className="verif-btn" onClick={handleVerificar}>Verificar</button>
             </div>
 
             {verif && (
-              <p className={verif.ok && verif.habilitado ? 'success' : 'error'}>
+              <p className={`verif-msg ${verif.ok && verif.habilitado ? 'success' : 'error'}`}>
                 {verif.ok
                   ? verif.habilitado
                     ? '✅ Habilitado'
@@ -101,6 +104,7 @@ export default function CircuitoEstadoModal({ idEleccion, circuito, onClose }) {
               to={`/circuitos/${circuito.id}/estado`}
               state={{ idEleccion }}
               onClick={onClose}
+              className="link-detalle"
             >
               Ver detalle completo →
             </Link>
