@@ -21,5 +21,6 @@ router.get('/habilitados/:idEleccion/:idCircuito/:credencial', authenticateToken
 //VEr estado de la mesa, cerrada, abierta, observados, emitidoos, totales
 router.get('/estado/:idEleccion/:idCircuito', authenticateToken, controller.getEstado);
 
+router.post('/vincular', authenticateToken, authorizeRoles('admin'), controller.vincularCircuitoAEleccion);
 
 module.exports = router;
