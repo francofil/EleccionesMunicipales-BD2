@@ -11,7 +11,7 @@ export default function HomeAdmin() {
     elecciones:      'Gestión de Elecciones',
     listas:          'Gestión de Listas',
     partidos:        'Gestión de Partidos',
-    establecimientos:'Gestión de Establecimientos',
+    votantes:        'Gestión de Votantes',
     resultados:      'Resultados'
   };
   return (

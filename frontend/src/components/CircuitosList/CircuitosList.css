@@ -39,3 +39,68 @@
 .circuito-item:hover {
   background-color: #bbdefb;
 }
+.boton-principal {
+  display: inline-block;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  margin-bottom: 1rem;
+}
+
+.boton-principal:hover {
+  background-color: #1565c0;
+  transform: translateY(-1px);
+}
+
+.boton-principal:active {
+  transform: scale(0.97);
+}
+
+
+/* Variante para eliminar */
+.boton.eliminar {
+  background-color: #d32f2f;
+  font-size: 0.8rem;
+}
+
+.boton.eliminar:hover {
+  background-color: #c62828;
+  font-size: 0.8rem;
+}
+
+/* Variante para editar */
+.boton.editar {
+  background-color: #f9a825;
+  font-size: 0.8rem;
+}
+
+.boton.editar:hover {
+  background-color: #f57f17;
+}
+
+/* Variante para mostrar votantes */
+.boton.votantes {
+  background-color: #2e7d32;
+}
+
+.boton.votantes:hover {
+  background-color: #1b5e20;
+}
+
+/* Variante para ⚙ estado */
+.boton.estado {
+  background-color: #6a1b9a;
+  font-size: 0.8rem;
+}
+
+.boton.estado:hover {
+  background-color: #4a148c;
+}
+

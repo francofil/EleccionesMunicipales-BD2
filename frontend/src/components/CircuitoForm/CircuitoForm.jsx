@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { createCircuito, updateCircuito } from '../../services/circuitoService';
 import './CircuitoForm.css'; // asumimos que tenés CSS para estilos bonitos
+import { useEffect } from 'react';
 
 export default function CircuitoForm({ onClose, onSaved, circuito }) {
-  const [form, setForm] = useState({
+ 
+  useEffect(() => {
+  setForm({
     zona: circuito?.zona || '',
     tipo: circuito?.tipo || '',
     accesible: circuito?.accesible || false,
@@ -11,9 +14,21 @@ export default function CircuitoForm({ onClose, onSaved, circuito }) {
     idEstablecimiento: circuito?.idEstablecimiento || '',
     ciAgente: circuito?.ciAgente || '',
     idDepartamento: circuito?.idDepartamento || '',
-    idMesa: circuito?.idMesa || ''
+    idMesa: circuito?.idMesa || '',
   });
+}, [circuito]);
 
+
+const [form, setForm] = useState({
+    zona: '',
+    tipo: '',
+    accesible: false,
+    direccion: '',
+    idEstablecimiento: '',
+    ciAgente: '',
+    idDepartamento: '',
+    idMesa: ''
+  });
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
 
@@ -105,7 +120,7 @@ export default function CircuitoForm({ onClose, onSaved, circuito }) {
 
       <div className="botones-formulario">
         <button type="submit">Guardar</button>
-        <button type="button" onClick={onClose}>Cancelar</button>
+        <button type="button" className="boton-cancelar" onClick={onClose}>Cancelar</button>
       </div>
     </form>
   );
