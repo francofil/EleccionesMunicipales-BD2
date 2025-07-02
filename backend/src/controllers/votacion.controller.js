@@ -90,38 +90,5 @@ exports.guardarVotoSecreto = async (req, res) => {
     }
 };
 
-exports.cantEmitidosPorCircuito = async (req, res) => {
-    try {
-        const [cantVotantesDelCircuito] = await pool.query('SELECT count(*) FROM  ListaVotacion_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ? ', [req.body.idEleccion, req.body.idCircuito]);
-        const [votantesDelCircuito] = await pool.query('SELECT credencial FROM  ListaVotacion_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ? ', [req.body.idEleccion, req.body.idCircuito]);
-        const votosEmitidosCIrcuito = 0;
-        const observados = 0;
-        votantesDelCircuito.forEach(element => {
-            const [emitido] = pool.query('SELECT fueEmitido FROM Votante_Circuito_Eleccion WHERE credencial = ? AND idEleccion = ? AND idCircuito = ?', [element.credencial, req.body.idEleccion, req.body.idCircuito]);
-            if (emitido.fueEmitido == true && emitidos.esObservado == true) {
-                observados == observados + 1;
-            } else {
-                if (emitido.fueEmitido == true) {
-                    votantesDelCircuito = votantesDelCircuito + 1;
-                }
-            }
-
-        });
-        res.status(200).json({
-            circuito: idCircuito,
-            eleccion: idEleccion,
-            habilitados: totalHabilitados,
-            emitidos: totalEmitidos,
-            restante: totalHabilitados - totalEmitidos,
-            observados: observados
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
-};
-
-
 
 
