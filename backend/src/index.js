@@ -12,15 +12,16 @@ app.use(cors());
 
 //llamada a routes
 const votantesRoutes = require('./routes/votantes.routes.js');
-const authRoutes = require('./routes/auth.router.js');
+const authRoutes = require('./routes/auth.routes.js');
 const circuitoRoutes = require('./routes/circuito.router.js')
 const eleccionCircuitoRoutes = require('./routes/eleccionCircuito.router.js')
-
+const votacionRoutes = require('./routes/votacion.routes');
 
 app.use('/votantes', votantesRoutes);
 app.use('/auth', authRoutes);
 app.use('/circuito', circuitoRoutes);
 app.use('/eleccionCircuito',  eleccionCircuitoRoutes);
+app.use('/votacion', votacionRoutes);
 
 const PORT = process.env.PORT || 3000;
 
