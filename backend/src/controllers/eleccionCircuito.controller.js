@@ -4,14 +4,12 @@ const pool = require("../db/db");
 exports.obtenerCircuitoDeEleccion = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT * FROM circuito_eleccion WHERE idEleccion = ? AND idCircuito = ?",
+      "SELECT * FROM Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ?",
       [req.params.idEleccion, req.params.idCircuito]
     );
     rows.length
       ? res.json(rows[0])
-      : res
-          .status(404)
-          .json({ error: "No se encontró ese circuito en la elección" });
+      : res.status(404).json({ error: "No se encontró ese circuito en la elección" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,13 +19,11 @@ exports.obtenerCircuitoDeEleccion = async (req, res) => {
 exports.añadirVotante = async (req, res) => {
   const { credencial, idEleccion, idCircuito } = req.body;
   try {
-    const [rows] = await pool.query(
+    await pool.query(
       "INSERT INTO ListaVotacion_Circuito_Eleccion (idEleccion, idCircuito, credencial) VALUES (?, ?, ?)",
       [idEleccion, idCircuito, credencial]
     );
-    res
-      .status(201)
-      .json({ message: "Votante habilitado agregado", result: rows });
+    res.status(201).json({ message: "Votante habilitado agregado" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -38,10 +34,10 @@ exports.cambiarEstadoMesa = async (req, res) => {
   const { mesaCerrada } = req.body;
   try {
     await pool.query(
-      "UPDATE circuito_eleccion SET mesaCerrada = ? WHERE idEleccion = ? AND idCircuito = ?",
+      "UPDATE Circuito_Eleccion SET mesaCerrada = ? WHERE idEleccion = ? AND idCircuito = ?",
       [mesaCerrada, req.params.idEleccion, req.params.idCircuito]
     );
-    res.json({ message: "Estado del circuito actualizado" });
+    res.json({ message: "Estado de mesa actualizado" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -67,12 +63,9 @@ exports.getOneVotanteHabilitado = async (req, res) => {
       "SELECT credencial FROM ListaVotacion_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ? AND credencial = ?",
       [req.params.idEleccion, req.params.idCircuito, req.params.credencial]
     );
-
-    if (rows.length > 0) {
-      res.json({ habilitado: true });
-    } else {
-      res.status(404).json({ habilitado: false });
-    }
+    rows.length > 0
+      ? res.json({ habilitado: true })
+      : res.status(404).json({ habilitado: false });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -80,36 +73,25 @@ exports.getOneVotanteHabilitado = async (req, res) => {
 
 // Traer estado de un circuito de una Eleccion, si la mesa esta cerrada, cant habilitados, votos observados, emitidos, restantes, totales.
 exports.getEstado = async (req, res) => {
-  try {
-    const [cantVotantesDelCircuito] = await pool.query(
-      "SELECT count(*) FROM  ListaVotacion_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ? ",
-      [req.body.idEleccion, req.body.idCircuito]
-    );
-    
-    const [votantesDelCircuito] = await pool.query(
-      "SELECT credencial FROM  ListaVotacion_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ? ",
-      [req.body.idEleccion, req.body.idCircuito]
-    );
-    const votosEmitidosCIrcuito = 0;
-    const observados = 0;
-    votantesDelCircuito.forEach((element) => {
-      const [emitido] = pool.query(
-        "SELECT fueEmitido FROM Votante_Circuito_Eleccion WHERE credencial = ? AND idEleccion = ? AND idCircuito = ?",
-        [element.credencial, req.body.idEleccion, req.body.idCircuito]
-      );
-      if (emitido.fueEmitido == true && emitidos.esObservado == true) {
-        observados == observados + 1;
-      } else {
-        if (emitido.fueEmitido == true) {
-          votantesDelCircuito = votantesDelCircuito + 1;
-        }
-      }
-    });
+  const { idEleccion, idCircuito } = req.body;
 
-    const [mesa] = await db.query(
-      `SELECT mesaCerrada FROM Circuito_Eleccion 
-      WHERE idEleccion = ? AND idCircuito = ?`,
-      [req.body.idEleccion, req.body.idCircuito]
+  try {
+    const [[{ totalHabilitados }]] = await pool.query(
+      "SELECT COUNT(*) AS totalHabilitados FROM ListaVotacion_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ?",
+      [idEleccion, idCircuito]
+    );
+
+    const [votos] = await pool.query(
+      "SELECT fueEmitido, esObservado FROM Votante_Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ?",
+      [idEleccion, idCircuito]
+    );
+
+    const totalEmitidos = votos.filter(v => v.fueEmitido).length;
+    const observados = votos.filter(v => v.fueEmitido && v.esObservado).length;
+
+    const [[estadoMesa]] = await pool.query(
+      "SELECT mesaCerrada FROM Circuito_Eleccion WHERE idEleccion = ? AND idCircuito = ?",
+      [idEleccion, idCircuito]
     );
 
     res.status(200).json({
@@ -119,10 +101,33 @@ exports.getEstado = async (req, res) => {
       emitidos: totalEmitidos,
       restante: totalHabilitados - totalEmitidos,
       observados: observados,
-      estado: mesa.estadMesa[0]
+      estado: estadoMesa.mesaCerrada
     });
+
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//POST, creamos la relacion circuito - eleccion
+exports.vincularCircuitoAEleccion = async (req, res) => {
+  const { idEleccion, idCircuito, idMesa, ciAgente } = req.body;
+
+  if (!idEleccion || !idCircuito || !idMesa || !ciAgente) {
+    return res.status(400).json({ error: "Faltan datos obligatorios" });
+  }
+
+  try {
+    await pool.query(
+      `INSERT INTO Circuito_Eleccion 
+       (idCircuito, idEleccion, idMesa, ciAgente, mesaCerrada) 
+       VALUES (?, ?, ?, ?, FALSE)`,
+      [idCircuito, idEleccion, idMesa, ciAgente]
+    );
+
+    res.status(201).json({ message: "Circuito vinculado a elección exitosamente" });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
