@@ -15,9 +15,10 @@ router.get('/:ci', authenticateToken, votanteController.getOneCI);
 // Obtener votante por credencial
 router.get('/credencial/:cc', authenticateToken, votanteController.getOneCC);
 
-router.getEstado('/estado/:credencial/:idEleccion/:idCircuito', votanteController.getEstado);
+
+router.get('/estado/:credencial/:idEleccion/:idCircuito', votanteController.getEstado);
 
 // Obtener circuito y elección asignados a un votante
-router.getAsignacion('/asignado/:cc', votanteController.getAsignacion);
+router.get('/asignado/:cc', votanteController.getAsignacion);
 
 module.exports = router;
