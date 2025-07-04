@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const votanteController = require('../controllers/votantes.controller.js');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+const db = require('../db/db');
+
 
 // Obtener todos los votantes (requiere login)
 router.get('/votantes', authenticateToken, votanteController.getAll);
@@ -18,8 +20,7 @@ router.get('/votantes/credencial/:cc', authenticateToken, votanteController.getO
 //module.exports = router;
 
 
-const { authenticateToken } = require('../middleware/authMiddleware');
-const db = require('../db/db');
+//const { authenticateToken } = require('../middleware/authMiddleware');
 
 // 1. Estado del voto de un votante
 router.get('/estado/:credencial/:idEleccion/:idCircuito', authenticateToken, async (req, res) => {
