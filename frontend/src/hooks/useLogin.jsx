@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { loginUser } from '../services/authService';
 import { saveToken } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // ✅ correcto
+import { jwtDecode } from 'jwt-decode';
 
 
 export function useLogin() {

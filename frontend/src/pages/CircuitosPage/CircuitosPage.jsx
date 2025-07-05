@@ -19,7 +19,7 @@ export default function CircuitosPage() {
   const [votantes,  setVotantes]  = useState([]);
   const [modalCircuito, setModalCircuito] = useState(null);
 
-  const idEleccionActual = 1; // TODO: obtén esto dinámicamente
+  const idEleccionActual = 1; 
 
   /* abrir formulario */
   const openNew  = ()  => { setEditing(null); setShowForm(true); };
@@ -68,7 +68,7 @@ export default function CircuitosPage() {
     <>
       <button className="boton"  onClick={openNew}>➕ Agregar Circuito</button>
 
-      {/* botón ⚙ Estado llega vía onEstado */}
+      
       <CircuitosList
         circuitos={circuitos}
         onEdit={openEdit}

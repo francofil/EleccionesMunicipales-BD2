@@ -1,25 +1,28 @@
-import { useVotantes } from '../../hooks/useVotantes';
+import { useState } from 'react';
+import { useVotantesPresidente } from '../../hooks/useVotantesPresidente';
 import VotantesList from '../../components/VotantesList/VotantesList';
 import Buscador from '../../components/Buscador/Buscador';
-import { useState } from 'react';
 
-export default function VotantesPage() {
-  const { votantes, loading, error } = useVotantes();
+export default function VotantesPresidentePage() {
+  const { votantes, loading, error } = useVotantesPresidente();
   const [filtro, setFiltro] = useState('');
 
   const votantesFiltrados = votantes.filter(v =>
     v.credencial.toLowerCase().includes(filtro.toLowerCase())
   );
 
-  if (loading) return <p>Cargando…</p>;
+  if (loading) return <p>Cargando...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
-    <div className="circuitos-container">
+    <div className="votantes-container">
+      <h1>Votantes del Circuito #1 </h1>
+
       <Buscador
         placeholder="Buscar por credencial..."
         onBuscar={setFiltro}
       />
+
       <VotantesList votantes={votantesFiltrados} />
     </div>
   );

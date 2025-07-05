@@ -6,13 +6,13 @@ export default function HomeAdmin() {
   const [active, setActive] = useState('bienvenida');
 
   const titles = {
-    bienvenida:      'Bienvenido al panel del administrador',
-    circuitos:       'Gestión de Circuitos',
-    elecciones:      'Gestión de Elecciones',
-    listas:          'Gestión de Listas',
-    partidos:        'Gestión de Partidos',
-    votantes:        'Gestión de Votantes',
-    resultados:      'Resultados'
+    bienvenida: 'Bienvenido al panel del administrador',
+    circuitos: 'Gestión de Circuitos',
+    elecciones: 'Gestión de Elecciones',
+    papeletas: 'Gestión de Papeletas',
+    partidos: 'Gestión de Partidos',
+    votantes: 'Gestión de Votantes',
+    resultados: 'Resultados'
   };
   return (
     <div className="homeadmin-container">

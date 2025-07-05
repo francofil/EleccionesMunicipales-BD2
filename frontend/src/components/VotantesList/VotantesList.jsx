@@ -1,4 +1,4 @@
-import './votantesList.css'; // o el nuevo nombre si lo cambiaste
+import './votantesList.css';
 
 export default function VotantesList({ votantes }) {
   return (
@@ -9,7 +9,8 @@ export default function VotantesList({ votantes }) {
           <p><strong>Apellido:</strong> {v.apellido}</p>
           <p><strong>CI:</strong> {v.ci}</p>
           <p><strong>Credencial:</strong> {v.credencial}</p>
-          
+
+
 
         </li>
       ))}

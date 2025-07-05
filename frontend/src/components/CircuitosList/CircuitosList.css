@@ -23,7 +23,7 @@
   padding: 0;
   margin: 0;
   flex-grow: 1;
-  overflow-y: auto; /* para que si hay muchos circuitos, haga scroll */
+  overflow-y: auto;
 }
 
 .circuito-item {
@@ -39,6 +39,7 @@
 .circuito-item:hover {
   background-color: #bbdefb;
 }
+
 .boton-principal {
   display: inline-block;
   padding: 0.35rem 0.8rem;
@@ -64,7 +65,7 @@
 }
 
 
-/* Variante para eliminar */
+
 .boton.eliminar {
   background-color: #d32f2f;
   font-size: 0.8rem;
@@ -75,7 +76,7 @@
   font-size: 0.8rem;
 }
 
-/* Variante para editar */
+
 .boton.editar {
   background-color: #f9a825;
   font-size: 0.8rem;
@@ -85,7 +86,6 @@
   background-color: #f57f17;
 }
 
-/* Variante para mostrar votantes */
 .boton.votantes {
   background-color: #2e7d32;
 }
@@ -94,7 +94,6 @@
   background-color: #1b5e20;
 }
 
-/* Variante para ⚙ estado */
 .boton.estado {
   background-color: #6a1b9a;
   font-size: 0.8rem;
@@ -103,4 +102,3 @@
 .boton.estado:hover {
   background-color: #4a148c;
 }
-

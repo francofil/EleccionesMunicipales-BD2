@@ -8,7 +8,7 @@ export default function Sidebar({ setActive, rol }) {
           <>
             <button onClick={() => setActive('circuitos')}>Circuitos</button>
             <button onClick={() => setActive('elecciones')}>Elecciones</button>
-            <button onClick={() => setActive('listas')}>Listas</button>
+            <button onClick={() => setActive('papeletas')}>Papeletas</button>
             <button onClick={() => setActive('partidos')}>Partidos</button>
             <button onClick={() => setActive('votantes')}>Votantes</button>
             <button onClick={() => setActive('resultados')}>Resultados</button>
@@ -18,7 +18,7 @@ export default function Sidebar({ setActive, rol }) {
         return (
           <>
             <button onClick={() => setActive('votantes')}>Ver Votantes</button>
-            <button onClick={() => setActive('circuitos')}>Circuito</button>
+            <button onClick={() => setActive('circuito')}>Circuito</button>
             <button onClick={() => setActive('resultados')}>Resultados</button>
           </>
         );

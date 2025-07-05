@@ -7,11 +7,11 @@ import { fetchCircuitos } from '../services/circuitoService';
  */
 export function useCircuitos() {
   const [circuitos, setCircuitos] = useState([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    let cancelado = false;          // evita setState si el componente se desmonta
+    let cancelado = false;
 
     (async () => {
       try {
@@ -27,6 +27,5 @@ export function useCircuitos() {
     return () => { cancelado = true; };
   }, []);
 
-  /* ── devolvemos también setCircuitos ── */
   return { circuitos, setCircuitos, loading, error };
 }

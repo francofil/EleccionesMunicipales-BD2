@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { createEleccion, updateEleccion } from '../../services/eleccionService';
-
+import './EleccionForm.css'
 export default function EleccionForm({ onClose, eleccion }) {
   const [form, setForm] = useState({
     fecha: eleccion?.fecha || '',
@@ -35,21 +35,21 @@ export default function EleccionForm({ onClose, eleccion }) {
 
       <label>
         Fecha:
-        <input 
-          type="date" 
-          name="fecha" 
-          value={form.fecha} 
-          onChange={handleChange} 
-          required 
+        <input
+          type="date"
+          name="fecha"
+          value={form.fecha}
+          onChange={handleChange}
+          required
         />
       </label>
 
       <label>
         Tipo:
-        <select 
-          name="tipo" 
-          value={form.tipo} 
-          onChange={handleChange} 
+        <select
+          name="tipo"
+          value={form.tipo}
+          onChange={handleChange}
           required
         >
           <option value="">Seleccione un tipo</option>
