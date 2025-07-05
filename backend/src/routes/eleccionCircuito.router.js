@@ -4,7 +4,7 @@ const controller = require('../controllers/eleccionCircuito.controller.js');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
 
 // Obtener estado del circuito en una elección (acceso general)
-router.get('/estado/:idEleccion/:idCircuito', authenticateToken, controller.obtenerCircuitoDeEleccion);
+router.get('/estado/:idEleccion/:idCircuito', controller.obtenerCircuitoDeEleccion);
 
 // Actualizar estado (cerrar/abrir mesa) - requiere presidente o admin
 router.put('/estado/:idEleccion/:idCircuito', authenticateToken, authorizeRoles('admin', 'presidente'), controller.cambiarEstadoMesa);
@@ -18,8 +18,11 @@ router.get('/habilitados/:idEleccion/:idCircuito', authenticateToken, controller
 // Verificar si una credencial está habilitada (requiere login)
 router.get('/habilitados/:idEleccion/:idCircuito/:credencial', authenticateToken, controller.getOneVotanteHabilitado);
 
-//VEr estado de la mesa, cerrada, abierta, observados, emitidoos, totales
+//VEr estado de la mesa, cerrada, abierta, observados, emitidoos, totales SOLO PRESIDENTE
 router.get('/estado/:idEleccion/:idCircuito', authenticateToken, controller.getEstado);
+
+//VEr estado de la mesa INFO NECESARIA PARA VOTANTE
+router.get('/estadoMesa/:idEleccion/:idCircuito', votacionController.getEstadoMesaPublico);
 
 
 router.post('/vincular', authenticateToken, authorizeRoles('admin'), controller.vincularCircuitoAEleccion);

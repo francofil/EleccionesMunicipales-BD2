@@ -110,6 +110,49 @@ exports.getEstado = async (req, res) => {
   }
 };
 
+const pool = require('../db/db');
+
+// Estado básico público de una mesa (para votante)
+exports.getEstadoMesaPublico = async (req, res) => {
+  const { idEleccion, idCircuito } = req.params;
+
+  try {
+    // Cantidad de votantes habilitados
+    const [[{ totalHabilitados }]] = await pool.query(
+      `SELECT COUNT(*) AS totalHabilitados
+       FROM ListaVotacion_Circuito_Eleccion
+       WHERE idEleccion = ? AND idCircuito = ?`,
+      [idEleccion, idCircuito]
+    );
+
+    // Votos emitidos (totales y observados)
+    const [votos] = await pool.query(
+      `SELECT fueEmitido FROM Votante_Circuito_Eleccion
+       WHERE idEleccion = ? AND idCircuito = ?`,
+      [idEleccion, idCircuito]
+    );
+    const emitidos = votos.filter(v => v.fueEmitido).length;
+
+    // Estado de la mesa
+    const [[{ mesaCerrada }]] = await pool.query(
+      `SELECT mesaCerrada FROM Circuito_Eleccion
+       WHERE idEleccion = ? AND idCircuito = ?`,
+      [idEleccion, idCircuito]
+    );
+
+    res.status(200).json({
+      mesaCerrada,
+      habilitados: totalHabilitados,
+      emitidos
+    });
+
+  } catch (error) {
+    console.error('Error al consultar estado público de mesa:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+
 //POST, creamos la relacion circuito - eleccion
 exports.vincularCircuitoAEleccion = async (req, res) => {
   const { idEleccion, idCircuito, idMesa, ciAgente } = req.body;
