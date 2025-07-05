@@ -29,18 +29,24 @@ export default function HomePresidente() {
 
       try {
         // Obtener el circuito del presidente por su CI
-        const resCircuito = await fetch(`http://localhost:3000/presidente/circuito/${ci}`, {
+        const resCircuito = await fetch(`http://localhost:3000/eleccion-circuito/porPresidente/${ci}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+
+
+        if (!resCircuito.ok) throw new Error('No se pudo obtener el circuito del presidente');
         const circuitoData = await resCircuito.json();
+        console.log("CIRCUITO OBTENIDO EN HOME:", circuitoData); 
         setCircuito(circuitoData);
 
         const { idCircuito, idEleccion } = circuitoData;
+        if (!idCircuito || !idEleccion) throw new Error('Datos del circuito inválidos');
 
         // Estado de la mesa
         const resMesa = await fetch(`http://localhost:3000/votacion/estadoMesa/${idEleccion}/${idCircuito}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!resMesa.ok) throw new Error('No se pudo obtener el estado de la mesa');
         const estado = await resMesa.json();
         setEstadoMesa(estado);
 
@@ -48,6 +54,7 @@ export default function HomePresidente() {
         const resVotantes = await fetch(`http://localhost:3000/circuitos/${idCircuito}/votantes`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!resVotantes.ok) throw new Error('No se pudo obtener la lista de votantes');
         const votantesData = await resVotantes.json();
         setVotantes(votantesData);
 
@@ -56,11 +63,13 @@ export default function HomePresidente() {
           const resResultados = await fetch(`http://localhost:3000/resultados/${idEleccion}/${idCircuito}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           });
-          const data = await resResultados.json();
-          setResultados(data);
+          if (resResultados.ok) {
+            const data = await resResultados.json();
+            setResultados(data);
+          }
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error al cargar datos del presidente:", err);
       } finally {
         setLoading(false);
       }
@@ -76,14 +85,16 @@ export default function HomePresidente() {
       <Sidebar setActive={setActive} rol="presidente" />
       <div className="main-content">
         <Panel
-          active={active}
-          title={titles[active]}
-          circuito={circuito}
-          votantes={votantes}
-          resultados={resultados}
-          estadoMesa={estadoMesa}
-        />
+        active={active}
+        title={titles[active]}
+        circuito={circuito} 
+        votantes={votantes}
+        resultados={resultados}
+        estadoMesa={estadoMesa}
+        rol="presidente"
+      />
       </div>
     </div>
   );
 }
+

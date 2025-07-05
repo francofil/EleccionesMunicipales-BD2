@@ -3,8 +3,10 @@ import EleccionesPage from '../../pages/EleccionesPage/EleccionesPage';
 import VotantesPage from '../../pages/VotantesPage/VotantesPage';
 import EstadoCircuitoPage from '../../pages/EstadoCircuitoPage/EstadoCircuitoPage';
 import './Panel.css';
+import ResultadosPage from '../../pages/ResultadosPage/ResultadosPage';
+import VotantesPagePresidente from '../../pages/VotantesPagePresidente/VotantesPagePresidente';
 
-export default function Panel({  title, active }) {
+export default function Panel({ title, active, circuito, resultados, estadoMesa, rol }) {
     const renderSection = () => {
     switch (active) {
       case 'circuitos':
@@ -13,11 +15,26 @@ export default function Panel({  title, active }) {
       case 'elecciones':
         return <EleccionesPage />;
       
-        case 'votantes':         return <VotantesPage />;
+      case 'votantes':         
+        if (rol === 'presidente') {
+          return <VotantesPagePresidente circuito={circuito} />;
+        } else {
+          return <VotantesPage />;
+        }
   
       /* case 'listas':
            return <ListasList />;  // y así sucesivamente
       */
+      case 'resultados':
+        return (
+          <ResultadosPage
+            resultados={resultados}
+            circuito={circuito} 
+            estadoMesa={estadoMesa}
+          />
+          
+        );
+        
 
       default:
         // Si es "bienvenida" (o no existe la sección aún) mostramos sólo el título

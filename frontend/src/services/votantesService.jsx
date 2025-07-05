@@ -85,3 +85,12 @@ export async function obtenerVotantePorCredencial(cc) {
 //   if (!res.ok) throw new Error(await res.text());
 //   return await res.json(); // { message: 'Votante eliminado' }
 // }
+
+export async function obtenerVotantesPorCircuito(idCircuito) {
+  const res = await fetch(`${baseUrl}/circuitos/${idCircuito}/votantes`, {
+    headers: authHeaders()
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json(); // Array de votantes del circuito
+}
