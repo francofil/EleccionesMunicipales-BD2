@@ -4,7 +4,9 @@ import HomePresidente from './pages/HomePresidente/HomePresidente';
 import Register from './pages/Register';
 import HomeAdmin from './pages/HomeAdmin/HomeAdmin';
 import HomeVotante from './pages/HomeVotante/HomeVotante';
+import EstadoCircuitoPage from './pages/EstadoCircuitoPage/EstadoCircuitoPage';
 import Votacion from './pages/Votacion/Votacion';
+
 
 export default function App() {
   return (
@@ -15,6 +17,7 @@ export default function App() {
         <Route path="/homePresidente" element={<HomePresidente />} />
         <Route path="/homeAdmin" element={<HomeAdmin />} />
         <Route path="/homeVotante" element={<HomeVotante />} />
+        <Route path="/circuitos/:id/estado" element={<EstadoCircuitoPage />} />
         <Route path="/votacion" element={<Votacion />} />
       </Routes>
     </BrowserRouter>

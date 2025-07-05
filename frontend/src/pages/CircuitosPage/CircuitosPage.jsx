@@ -1,7 +1,8 @@
 // src/pages/CircuitosPage.jsx
 import { useState } from 'react';
-import CircuitosList   from '../../components/CircuitosList/CircuitosList';
-import CircuitoForm    from '../../components/CircuitoForm/CircuitoForm';
+import CircuitosList        from '../../components/CircuitosList/CircuitosList';
+import CircuitoForm         from '../../components/CircuitoForm/CircuitoForm';
+import CircuitoEstadoModal  from '../../components/CircuitoEstadoModal/CircuitoEstadoModal';
 
 import { useCircuitos } from '../../hooks/useCircuitos';
 import {
@@ -10,19 +11,22 @@ import {
 } from '../../services/circuitoService';
 
 export default function CircuitosPage() {
-  /* ───── estado global vía hook ───── */
+  /* ───── estado global ───── */
   const { circuitos, setCircuitos, loading, error } = useCircuitos();
 
   /* ───── estados locales ───── */
   const [showForm,  setShowForm]  = useState(false);
-  const [editing,   setEditing]   = useState(null); // null = nuevo
+  const [editing,   setEditing]   = useState(null);
   const [votantes,  setVotantes]  = useState([]);
+  const [modalCircuito, setModalCircuito] = useState(null);
 
-  /* ───── abrir formulario ───── */
-  const openNew  = ()        => { setEditing(null);   setShowForm(true); };
-  const openEdit = (c)       => { setEditing(c);      setShowForm(true); };
+  const idEleccionActual = 1; // TODO: obtén esto dinámicamente
 
-  /* ───── guardar (callback del formulario) ───── */
+  /* abrir formulario */
+  const openNew  = ()  => { setEditing(null); setShowForm(true); };
+  const openEdit = (c) => { setEditing(c);    setShowForm(true); };
+
+  /* guardar */
   const handleSaved = (circuitoGuardado) => {
     setCircuitos(prev => {
       const existe = prev.some(c => c.id === circuitoGuardado.id);
@@ -32,30 +36,32 @@ export default function CircuitosPage() {
     });
   };
 
-  /* ───── eliminar ───── */
+  /* eliminar */
   const handleDelete = async (id) => {
     if (!confirm('¿Eliminar este circuito?')) return;
     try {
       await deleteCircuito(id);
       setCircuitos(prev => prev.filter(c => c.id !== id));
-      // cierra el form si estaba editando ese circuito
       if (editing?.id === id) { setShowForm(false); setEditing(null); }
     } catch (err) {
-      alert('Error al eliminar: ' + err.message);
+      console.error(err);
     }
   };
 
-  /* ───── cargar votantes ───── */
+  /* votantes */
   const handleShowVotantes = async (id) => {
     try {
       const data = await fetchVotantesByCircuito(id);
       setVotantes(data);
     } catch (err) {
-      alert('Error: ' + err.message);
+      console.error(err);
     }
   };
 
-  /* ───── render ───── */
+  /* abrir modal estado */
+  const handleEstado = (circuito) => setModalCircuito(circuito);
+
+  /* render */
   if (loading) return <p>Cargando…</p>;
   if (error)   return <p style={{ color: 'red' }}>⚠ {error}</p>;
 
@@ -63,11 +69,13 @@ export default function CircuitosPage() {
     <>
       <button onClick={openNew}>➕ Agregar Circuito</button>
 
+      {/* botón ⚙ Estado llega vía onEstado */}
       <CircuitosList
         circuitos={circuitos}
         onEdit={openEdit}
         onDelete={handleDelete}
         onShowVotantes={handleShowVotantes}
+        onEstado={handleEstado}
       />
 
       {showForm && (
@@ -75,6 +83,14 @@ export default function CircuitosPage() {
           circuito={editing}
           onClose={() => setShowForm(false)}
           onSaved={handleSaved}
+        />
+      )}
+
+      {modalCircuito && (
+        <CircuitoEstadoModal
+          idEleccion={idEleccionActual}
+          circuito={modalCircuito}
+          onClose={() => setModalCircuito(null)}
         />
       )}
 

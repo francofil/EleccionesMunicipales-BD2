@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { createCircuito } from '../../services/circuitoService';
-import { updateCircuito } from '../../services/circuitoService';
+import { createCircuito, updateCircuito } from '../../services/circuitoService';
+import './CircuitoForm.css'; // asumimos que tenés CSS para estilos bonitos
 
-export default function CircuitoForm({ onClose, circuito }) {
-   const [form, setForm] = useState({
+export default function CircuitoForm({ onClose, onSaved, circuito }) {
+  const [form, setForm] = useState({
     zona: circuito?.zona || '',
     tipo: circuito?.tipo || '',
     accesible: circuito?.accesible || false,
@@ -13,6 +13,10 @@ export default function CircuitoForm({ onClose, circuito }) {
     idDepartamento: circuito?.idDepartamento || '',
     idMesa: circuito?.idMesa || ''
   });
+
+  const [mensaje, setMensaje] = useState('');
+  const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm(prev => ({
@@ -23,24 +27,41 @@ export default function CircuitoForm({ onClose, circuito }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMensaje('');
+    setError('');
+
+    // Validaciones básicas
+    if (!form.zona || !form.tipo || !form.direccion || !form.ciAgente) {
+      setError('Por favor, completá todos los campos obligatorios.');
+      return;
+    }
+
     try {
+      let response;
       if (circuito) {
-        await updateCircuito(circuito.id, form);
-        alert('Circuito actualizado');
+        response = await updateCircuito(circuito.id, form);
+        setMensaje('✅ Circuito actualizado correctamente.');
       } else {
-        await createCircuito(form);
-        alert('Circuito creado');
+        response = await createCircuito(form);
+        setMensaje('✅ Circuito creado correctamente.');
       }
-      onClose();
-      window.location.reload(); // luego mejoramos esto
-    } catch (error) {
-      alert('Error: ' + error.message);
+
+      // Actualizar lista sin recargar
+      onSaved?.({ ...form, id: response.id || circuito?.id }); // id puede venir en la respuesta
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (err) {
+      setError('⚠ Error: ' + err.message);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="formulario-circuito">
-      <h3>Nuevo Circuito</h3>
+      <h3>{circuito ? 'Editar Circuito' : 'Nuevo Circuito'}</h3>
+
+      {mensaje && <p className="mensaje-exito">{mensaje}</p>}
+      {error && <p className="mensaje-error">{error}</p>}
 
       <label>
         Zona:
@@ -64,7 +85,7 @@ export default function CircuitoForm({ onClose, circuito }) {
 
       <label>
         Establecimiento (ID):
-        <input name="idEstablecimiento" value={form.idEstablecimiento} onChange={handleChange} required />
+        <input name="idEstablecimiento" value={form.idEstablecimiento} onChange={handleChange} />
       </label>
 
       <label>
@@ -74,16 +95,18 @@ export default function CircuitoForm({ onClose, circuito }) {
 
       <label>
         Departamento (ID):
-        <input name="idDepartamento" value={form.idDepartamento} onChange={handleChange} required />
+        <input name="idDepartamento" value={form.idDepartamento} onChange={handleChange} />
       </label>
 
       <label>
         Mesa (ID):
-        <input name="idMesa" value={form.idMesa} onChange={handleChange} required />
+        <input name="idMesa" value={form.idMesa} onChange={handleChange} />
       </label>
 
-      <button type="submit">Guardar</button>
-      <button type="button" onClick={onClose}>Cancelar</button>
+      <div className="botones-formulario">
+        <button type="submit">Guardar</button>
+        <button type="button" onClick={onClose}>Cancelar</button>
+      </div>
     </form>
   );
 }
