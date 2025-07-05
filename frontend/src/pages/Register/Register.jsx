@@ -1,7 +1,7 @@
 //Solo para registrar los usuarios admin y presidentes con las contraseñas hasheadas
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login/Login.css';
+import '../Login/Login.css'; 
 
 export default function Register() {
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ export default function Register() {
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? 'Registrando...' : 'Registrar usuario'}
           </button>
-          {error && <p className="error-message">⚠ {error}</p>}
+          {error && <p className="error-message">Error alingresar los datos, la cedula ingresada debe pertenecer a un votante</p>}
         </form>
       </div>
     </div>
