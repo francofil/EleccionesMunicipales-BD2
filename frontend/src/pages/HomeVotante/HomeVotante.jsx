@@ -12,6 +12,7 @@ export default function HomeVotante() {
   const [estadoVoto, setEstadoVoto] = useState(null); // { fueEmitido: true/false, esObservado: true/false }
   const [estadoMesa, setEstadoMesa] = useState(null);
   const [loading, setLoading] = useState(true);
+  //const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   
@@ -86,12 +87,24 @@ export default function HomeVotante() {
             <p><strong>Credencial:</strong> {votanteData?.credencial}</p>
             <p><strong>Estado del voto:</strong> {estadoVoto?.fueEmitido ? 'Emitido' : 'Pendiente'}</p>
             <p><strong>Tipo de voto:</strong> {estadoVoto?.esObservado ? 'Observado' : 'Regular'}</p>
+
+            {estadoVoto?.fueEmitido && (
+              <a
+                href={`http://localhost:3000/votacion/constancia/${votanteData?.credencial}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver constancia de voto
+              </a>
+            )}
           </div>
         )}
 
         {active === 'votar' && (
           estadoVoto?.fueEmitido ? (
             <p>Ya has emitido tu voto.</p>
+          ) : estadoMesa?.mesaCerrada ? (
+            <p>La mesa ya fue cerrada, no es posible emitir el voto.</p>
           ) : (
             <button onClick={() => navigate('/votacion')}>
               Emitir mi voto
