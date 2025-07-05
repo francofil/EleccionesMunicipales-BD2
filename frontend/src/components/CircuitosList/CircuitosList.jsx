@@ -5,6 +5,7 @@ export default function CircuitosList({ circuitos, onEdit, onDelete, onEstado })
     <ul className="circuitos-list">
       {circuitos.map(c => (
         <li key={c.id} className="circuito-item">
+          <h3 className="titulo-circuito">Circuito {c.id}</h3>
           <p><strong>Zona:</strong> {c.zona}</p>
           <p><strong>Tipo:</strong> {c.tipo}</p>
           <p><strong>Accesible:</strong> {c.accesible ? 'Sí' : 'No'}</p>

@@ -66,11 +66,7 @@ const [form, setForm] = useState({
 
         console.log("Respuesta de createCircuito:", response);
 
-        // Vincular a elección
-        const idEleccion = 1; // Cambiar luego por elección dinámica
-        const idMesa = 1;
-        const ciAgente = 10000001;
-        await vincularCircuitoAEleccion(idEleccion, response.id, idMesa, ciAgente, false);
+        await vincularCircuitoAEleccion(form.idEleccion, response.id, form.idMesa, form.ciAgente, false);
       }
 
 
@@ -120,6 +116,15 @@ const [form, setForm] = useState({
         Departamento (ID):
         <input name="idDepartamento" value={form.idDepartamento} onChange={handleChange} />
       </label>
+      <label>Mesa (ID):
+          <input name="idMesa" value={form.idMesa} onChange={handleChange} />
+        </label>
+        <label>CI Agente:
+          <input name="ciAgente" value={form.ciAgente} onChange={handleChange} />
+        </label>
+        <label>ID Elección:
+          <input name="idEleccion" value={form.idEleccion} onChange={handleChange} />
+        </label>
 
       <div className="botones-formulario">
         <button type="submit">Guardar</button>
