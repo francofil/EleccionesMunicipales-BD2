@@ -8,7 +8,8 @@ export default function HomePresidente() {
 
   const titles = {
     bienvenida: 'Bienvenido Presidente de Mesa',
-    circuito: 'Gestión del Circuito',
+    votantes: 'Gestión de votantes',
+    circuito: 'Circuito',
     resultados: 'Resultados'
   };
 

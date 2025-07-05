@@ -13,10 +13,9 @@ export default function CircuitosList({ circuitos, onEdit, onDelete, onEstado })
           <p><strong>Establecimiento:</strong> {c.idEstablecimiento}</p>
           <p><strong>Departamento:</strong> {c.idDepartamento}</p>
 
-          <button className="boton editar" onClick={() => onEdit(c)}>✏️ Editar</button>
-          <button className="boton eliminar" onClick={() => onDelete(c.id)}>🗑 Eliminar</button>
-          <button className="boton estado" onClick={() => onEstado(c)}>⚙ Estado</button>
-
+          {onEdit && <button className="boton editar" onClick={() => onEdit(c)}>✏️ Editar</button>}
+          {onDelete && <button className="boton eliminar" onClick={() => onDelete(c.id)}>🗑 Eliminar</button>}
+          {onEstado && <button className="boton estado" onClick={() => onEstado(c)}>⚙ Estado</button>}
         </li>
 
       ))}

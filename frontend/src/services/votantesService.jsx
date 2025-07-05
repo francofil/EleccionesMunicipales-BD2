@@ -63,25 +63,3 @@ export async function obtenerVotantePorCredencial(cc) {
   return await res.json();         // Objeto votante
 }
 
-/* ──────────────────────────────────────────────
-   (Opcional) Actualizar o eliminar votante
-   Uncomment si los necesitas
-─────────────────────────────────────────────── */
-// export async function actualizarVotante(ci, data) {
-//   const res = await fetch(`${baseUrl}/votantes/${ci}`, {
-//     method: 'PUT',
-//     headers: { 'Content-Type': 'application/json', ...authHeaders() },
-//     body: JSON.stringify(data)
-//   });
-//   if (!res.ok) throw new Error(await res.text());
-//   return await res.json(); // { message: 'Votante actualizado' }
-// }
-
-// export async function eliminarVotante(ci) {
-//   const res = await fetch(`${baseUrl}/votantes/${ci}`, {
-//     method: 'DELETE',
-//     headers: authHeaders()
-//   });
-//   if (!res.ok) throw new Error(await res.text());
-//   return await res.json(); // { message: 'Votante eliminado' }
-// }

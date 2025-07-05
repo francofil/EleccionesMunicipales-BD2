@@ -11,6 +11,7 @@ export default function VotantesList({ votantes }) {
           <p><strong>Credencial:</strong> {v.credencial}</p>
 
 
+
         </li>
       ))}
     </ul>

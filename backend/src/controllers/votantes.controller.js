@@ -22,7 +22,7 @@ exports.getOneCI = async (req, res) => {
 exports.getOneCC = async (req, res) => {
   const [rows] = await pool.query(
     "SELECT * FROM Votante WHERE credencial = ?",
-    [req.params.credencial]
+    [req.params.cc]
   );
   rows.length
     ? res.json(rows[0])

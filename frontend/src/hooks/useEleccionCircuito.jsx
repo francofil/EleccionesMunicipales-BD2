@@ -4,6 +4,7 @@ import { getEstado, getHabilitados } from '../services/eleccionCircuitoService';
 export function useEleccionCircuito(idEleccion, idCircuito) {
   const [estado, setEstado] = useState(null);
   const [habilitados, setHabilitados] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 

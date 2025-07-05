@@ -1,12 +1,14 @@
 import CircuitosPage from '../../pages/CircuitosPage/CircuitosPage';
 import EleccionesPage from '../../pages/EleccionesPage/EleccionesPage';
-import VotantesPage from '../../pages/VotantesPage/VotantesPage';
+import VotantesAdminPage from '../../pages/VotantesAdminPage/VotantesAdminPage';
 import EstadoCircuitoPage from '../../pages/EstadoCircuitoPage/EstadoCircuitoPage';
 import './Panel.css';
 import PapeletasPage from '../../pages/PapeletasPage/PapeletasPage';
 import PartidosPage from '../../pages/PartidosPage/PartidosPage';
 import ResultadosPage from '../../pages/ResultadosPage/ResultadosPage';
-export default function Panel({ title, active }) {
+import VotantesPresidentePage from '../../pages/VotantesPresidentePage/VotantesPresidentePage';
+import CircuitoPresidentePage from '../../pages/CircuitoPresidentePage/CircuitoPresidentePage';
+export default function Panel({ title, active, idCircuito,idEleccion }) {
   const renderSection = () => {
     switch (active) {
       case 'circuitos':
@@ -16,7 +18,7 @@ export default function Panel({ title, active }) {
         return <EleccionesPage />;
 
       case 'votantes':
-        return <VotantesPage />;
+        return <VotantesAdminPage />;
 
       case 'papeletas':
         return <PapeletasPage />;
@@ -26,6 +28,12 @@ export default function Panel({ title, active }) {
 
       case 'resultados':
         return <ResultadosPage />;
+      
+      case 'ver-votantes':
+        return <VotantesPresidentePage  idCircuito={idCircuito}
+                 idEleccion={idEleccion}/>
+      case 'circuito':
+        return <CircuitoPresidentePage/>
       default:
         // Si es "bienvenida" (o no existe la sección aún) mostramos sólo el título
         return null;
