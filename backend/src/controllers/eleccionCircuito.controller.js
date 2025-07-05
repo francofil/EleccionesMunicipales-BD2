@@ -131,3 +131,28 @@ exports.vincularCircuitoAEleccion = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Obtener el circuito y elección asignados a un presidente por su CI
+exports.getCircuitoDelPresidente = async (req, res) => {
+  const ciPresidente = req.params.ci;
+
+  try {
+    const [rows] = await pool.query(
+      `SELECT ec.idEleccion, ec.idCircuito, ec.mesaCerrada
+       FROM Circuito_Eleccion ec
+       JOIN Circuito c ON ec.idCircuito = c.idCircuito
+       JOIN Usuario u ON c.idPresidente = u.idUsuario
+       WHERE u.ci = ?`,
+      [ciPresidente]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'No se encontró circuito asignado al presidente' });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('Error en obtenerCircuitoPorPresidente:', error);
+    res.status(500).json({ error: error.message });
+  }
+};

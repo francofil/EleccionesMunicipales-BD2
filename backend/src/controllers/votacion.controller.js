@@ -90,5 +90,46 @@ exports.guardarVotoSecreto = async (req, res) => {
     }
 };
 
+exports.cerrarMesa = async (req, res) => {
+  const { idEleccion, idCircuito } = req.params;
+
+  try {
+    // 1. Verificamos si ya está cerrada
+    const [estado] = await db.query(
+      'SELECT mesaCerrada FROM Eleccion_Circuito WHERE idEleccion = ? AND idCircuito = ?',
+      [idEleccion, idCircuito]
+    );
+
+    if (!estado.length) {
+      return res.status(404).json({ error: 'Circuito o elección no encontrada' });
+    }
+
+    if (estado[0].mesaCerrada) {
+      return res.status(400).json({ error: 'La mesa ya está cerrada' });
+    }
+
+    // 2. Se cierra la mesa
+    await db.query(
+      'UPDATE Eleccion_Circuito SET mesaCerrada = true WHERE idEleccion = ? AND idCircuito = ?',
+      [idEleccion, idCircuito]
+    );
+
+    // 3. Devolver resultados
+    const [resultados] = await db.query(`
+      SELECT l.nombreLista, 
+             COUNT(v.idVoto) as votos,
+             SUM(v.votoObservado) as votosObservados
+      FROM Voto v
+      JOIN Lista l ON v.idLista = l.idLista
+      WHERE v.idEleccion = ? AND v.idCircuito = ?
+      GROUP BY l.nombreLista
+    `, [idEleccion, idCircuito]);
+
+    res.status(200).json(resultados);
+  } catch (err) {
+    console.error("Error al cerrar mesa:", err);
+    res.status(500).json({ error: 'Error interno al cerrar la mesa' });
+  }
+};
 
 
