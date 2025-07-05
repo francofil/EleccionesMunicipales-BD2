@@ -1,17 +1,16 @@
 
 import { useState } from 'react'
 import './Login.css';
-import { useLogin } from '../../hooks/useLogin'
+import { useLogin } from '../../hooks/useLoginVotante'
 
 export default function Login() {
     const { login, loading, error } = useLogin();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [cedula, setCedula] = useState('');
+    const [credencial, setCredencial] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        await login({ username, password });
-
+        await login({ cedula, credencial });
     };
 
     return (
@@ -27,11 +26,11 @@ export default function Login() {
                 <form onSubmit={handleLogin}>
                     <div className="input-group">
                         <label htmlFor="username">Credencial</label>
-                        <input type="text" id="username" placeholder="Ingrese su credencial." value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <input type="text" id="credencial" placeholder="Ingrese su credencial." value={credencial} onChange={(e) => setCredencial(e.target.value)} />
                     </div>
                     <div className="input-group">
                         <label htmlFor="password">Cedula de identidad</label><p>Sin puntos ni guiones</p>
-                        <input type="password" id="password" placeholder="Ingrese su ci." value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <input type="text" id="cedula" placeholder="Ingrese su ci." value={cedula} onChange={(e) => setCedula(e.target.value)} />
                     </div>
                     <button type="submit" className="login-button" disabled={loading}>{loading ? 'Cargando...' : 'Iniciar sesión'}</button>
                     {error && <p className="error-message">La combinacion de cedula y credencial no coincide con ningun votante</p>}
