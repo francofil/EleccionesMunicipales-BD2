@@ -15,7 +15,7 @@ export default function VotantesPage() {
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
-    <div className="circuitos-container">
+    <div className="votantes-container">
       <Buscador
         placeholder="Buscar por credencial..."
         onBuscar={setFiltro}

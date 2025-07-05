@@ -8,7 +8,7 @@ export default function Register() {
   const [ci, setCi] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [rol, setRol] = useState('presidente'); // predeterminado
+  const [rol, setRol] = useState('presidente'); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

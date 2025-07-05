@@ -3,6 +3,7 @@ import { useElecciones } from '../../hooks/useElecciones';
 import EleccionForm from '../../components/EleccionForm/EleccionForm';
 import EleccionesList from '../../components/EleccionesList/EleccionesList';
 import { deleteEleccion } from '../../services/eleccionService';
+import './EleccionesPage.css';
 
 export default function EleccionesPage() {
   const { elecciones, loading, error } = useElecciones();
@@ -36,8 +37,8 @@ export default function EleccionesPage() {
   if (error) return <p style={{color:'red'}}>⚠ {error}</p>;
 
   return (
-    <>
-      <button onClick={abrirFormularioNuevo}>➕ Agregar Elección</button>
+    <div className='elecciones-container'>
+      <button className= "boton" onClick={abrirFormularioNuevo}>➕ Agregar Elección</button>
 
       {mostrarFormulario && (
         <EleccionForm
@@ -51,6 +52,6 @@ export default function EleccionesPage() {
         onEdit={abrirFormularioEdicion}
         onDelete={handleDelete}
       />
-    </>
+    </div>
   );
 }

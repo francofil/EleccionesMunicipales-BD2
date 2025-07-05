@@ -1,4 +1,4 @@
-.votantes-container {
+.papeletas-container {
   background-color: #fff;
   padding: 2rem;
   border-radius: 1.5rem;
@@ -10,7 +10,7 @@
   flex-direction: column;
 }
 
-.votantes-container h2 {
+.papeletas-container h2 {
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -18,16 +18,15 @@
   flex-shrink: 0;
 }
 
-.votantes-list {
+.papeletas-list {
   list-style: none;
   padding: 0;
   margin: 0;
   flex-grow: 1;
-  overflow-y: auto; 
-  
+  overflow-y: auto;
 }
 
-.votantes-item {
+.papeletas-item {
   background-color: #e3f2fd;
   border-left: 6px solid #40a6ff;
   border-radius: 10px;
@@ -37,6 +36,6 @@
   transition: background-color 0.3s ease;
 }
 
-.votantes-item:hover {
+.papeletas-item:hover {
   background-color: #bbdefb;
 }

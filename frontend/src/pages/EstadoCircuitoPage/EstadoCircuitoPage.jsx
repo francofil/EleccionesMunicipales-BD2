@@ -11,8 +11,8 @@ import './EstadoCircuitoPage.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function EstadoCircuitoPage() {
-  const { id }     = useParams();          // idCircuito
-  const { state }  = useLocation();        // { idEleccion }
+  const { id }     = useParams();          
+  const { state }  = useLocation();        
   const idEleccion = state?.idEleccion ?? 1;
   const navigate = useNavigate();
 

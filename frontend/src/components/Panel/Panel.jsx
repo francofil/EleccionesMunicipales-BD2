@@ -3,27 +3,34 @@ import EleccionesPage from '../../pages/EleccionesPage/EleccionesPage';
 import VotantesPage from '../../pages/VotantesPage/VotantesPage';
 import EstadoCircuitoPage from '../../pages/EstadoCircuitoPage/EstadoCircuitoPage';
 import './Panel.css';
-
-export default function Panel({  title, active }) {
-    const renderSection = () => {
+import PapeletasPage from '../../pages/PapeletasPage/PapeletasPage';
+import PartidosPage from '../../pages/PartidosPage/PartidosPage';
+import ResultadosPage from '../../pages/ResultadosPage/ResultadosPage';
+export default function Panel({ title, active }) {
+  const renderSection = () => {
     switch (active) {
       case 'circuitos':
         return <CircuitosPage />;
 
       case 'elecciones':
         return <EleccionesPage />;
-      
-        case 'votantes':         return <VotantesPage />;
-  
-      /* case 'listas':
-           return <ListasList />;  // y así sucesivamente
-      */
 
+      case 'votantes':
+        return <VotantesPage />;
+
+      case 'papeletas':
+        return <PapeletasPage />;
+
+      case 'partidos':
+        return <PartidosPage />;
+
+      case 'resultados':
+        return <ResultadosPage />;
       default:
         // Si es "bienvenida" (o no existe la sección aún) mostramos sólo el título
         return null;
     }
-};
+  };
   return (
     <main className="panel">
       <div className="top-bar">
@@ -38,7 +45,7 @@ export default function Panel({  title, active }) {
             <h2>{title}</h2>
           </div>
         )}
- {renderSection()}
+        {renderSection()}
       </div>
     </main>
   );
