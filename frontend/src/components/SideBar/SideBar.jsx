@@ -17,8 +17,8 @@ export default function Sidebar({ setActive, rol }) {
       case 'presidente':
         return (
           <>
-            <button onClick={() => setActive('ver-votantes')}>Ver Votantes</button>
-            <button onClick={() => setActive('circuito')}>Circuito</button>
+            <button onClick={() => setActive('votantes')}>Ver Votantes</button>
+            <button onClick={() => setActive('circuitos')}>Circuito</button>
             <button onClick={() => setActive('resultados')}>Resultados</button>
           </>
         );
