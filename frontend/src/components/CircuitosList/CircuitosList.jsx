@@ -1,6 +1,6 @@
 import './CircuitosList.css';
 
-export default function CircuitosList({ circuitos, onEdit, onDelete , onShowVotantes,onEstado}) {
+export default function CircuitosList({ circuitos, onEdit, onDelete ,onEstado}) {
   return (
     <ul className="circuitos-list">
       {circuitos.map(c => (
@@ -14,10 +14,9 @@ export default function CircuitosList({ circuitos, onEdit, onDelete , onShowVota
   <p><strong>Departamento:</strong> {c.idDepartamento}</p>
   <p><strong>Mesa:</strong> {c.idMesa}</p>
 
-  <button onClick={() => onEdit(c)}>✏️ Editar</button>
-  <button onClick={() => onDelete(c.id)}>🗑 Eliminar</button>
-  <button onClick={() => onShowVotantes(c.id)}>👥 Votantes</button>
-<button onClick={() => onEstado(c)}>⚙ Estado</button>
+  <button className="boton editar" onClick={() => onEdit(c)}>✏️ Editar</button>
+  <button className="boton eliminar" onClick={() => onDelete(c.id)}>🗑 Eliminar</button>
+<button className="boton estado" onClick={() => onEstado(c)}>⚙ Estado</button>
 
 </li>
 

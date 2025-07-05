@@ -1,0 +1,35 @@
+/* src/components/Boton/Boton.css */
+.boton {
+  padding: 8px 16px;
+  margin: 4px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: white;
+}
+
+.boton.primario {
+  background-color: #007bff;
+}
+
+.boton.primario:hover {
+  background-color: #0056b3;
+}
+
+.boton.peligro {
+  background-color: #dc3545;
+}
+
+.boton.peligro:hover {
+  background-color: #a71d2a;
+}
+
+.boton.secundario {
+  background-color: #6c757d;
+}
+
+.boton.secundario:hover {
+  background-color: #4e555b;
+}

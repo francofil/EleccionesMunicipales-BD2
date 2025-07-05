@@ -1,9 +1,8 @@
-// src/pages/CircuitosPage.jsx
 import { useState } from 'react';
 import CircuitosList        from '../../components/CircuitosList/CircuitosList';
 import CircuitoForm         from '../../components/CircuitoForm/CircuitoForm';
 import CircuitoEstadoModal  from '../../components/CircuitoEstadoModal/CircuitoEstadoModal';
-
+import './CircuitosPage.css'
 import { useCircuitos } from '../../hooks/useCircuitos';
 import {
   deleteCircuito,
@@ -67,7 +66,7 @@ export default function CircuitosPage() {
 
   return (
     <>
-      <button onClick={openNew}>➕ Agregar Circuito</button>
+      <button className="boton"  onClick={openNew}>➕ Agregar Circuito</button>
 
       {/* botón ⚙ Estado llega vía onEstado */}
       <CircuitosList
