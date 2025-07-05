@@ -70,3 +70,23 @@ export async function verificarVotanteHabilitado(idEleccion, idCircuito, credenc
   if (!res.ok) throw new Error(await res.text());
   return await res.json();
 }
+export async function vincularCircuitoAEleccion(idEleccion, idCircuito, idMesa, ciAgente) {
+  const token = localStorage.getItem('token');
+
+  const res = await fetch(`${baseUrl}/eleccionCircuito/vincular`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      idEleccion,
+      idCircuito,
+      idMesa,
+      ciAgente
+    })
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+}

@@ -8,11 +8,14 @@ import {
   agregarVotanteHabilitado
 } from '../../services/eleccionCircuitoService';
 import './EstadoCircuitoPage.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function EstadoCircuitoPage() {
   const { id }     = useParams();          // idCircuito
   const { state }  = useLocation();        // { idEleccion }
   const idEleccion = state?.idEleccion ?? 1;
+  const navigate = useNavigate();
+
 
   /* ─── estados ─── */
   const [estado,       setEstado]       = useState(null);   // abierto | cerrado
@@ -74,6 +77,8 @@ export default function EstadoCircuitoPage() {
   /* ─── render ─── */
   return (
     <div className="estado-circuito-container">
+      <button className="boton volver" onClick={() => navigate(-1)}>⬅ Volver</button>
+
       <h1>Circuito #{id} – Elección {idEleccion}</h1>
 
       {msg.type && (
