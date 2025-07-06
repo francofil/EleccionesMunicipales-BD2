@@ -1,5 +1,30 @@
 const pool = require("../db/db");
 
+
+// POST login
+exports.login = async (req, res) => {
+  const {
+    cedula,
+    credencial
+  } = req.body;
+  try {
+    const [rows] = await pool.query(`SELECT * FROM Votante WHERE ci = ? AND credencial = ?`,
+      [cedula, credencial]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Votante no encontrado' });
+    }
+
+    const user = rows[0];
+
+
+    res.status(200).json({ message: 'Login exitoso', cedula: user.ci, credencial: user.credencial, nombre: user.nombre, apellido: user.apellido});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // GET all
 exports.getAll = async (req, res) => {
   const [rows] = await pool.query("SELECT * FROM Votante");
@@ -67,14 +92,13 @@ exports.remove = async (req, res) => {
 
 // Obtener circuito y elección asignados a un votante
 exports.getAsignacion = async (req, res) => {
-  const { credencial } = req.params;
 
   try {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       `SELECT idEleccion, idCircuito 
        FROM ListaVotacion_Circuito_Eleccion 
        WHERE credencial = ? 
-       LIMIT 1`, [credencial]
+       LIMIT 1`, [req.params.credencial]
     );
 
     if (rows.length === 0) {
@@ -93,7 +117,7 @@ exports.getEstado = async (req, res) => {
   const { credencial, idEleccion, idCircuito } = req.params;
 
   try {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       `SELECT fueEmitido, esObservado 
        FROM Votante_Circuito_Eleccion 
        WHERE credencial = ? AND idEleccion = ? AND idCircuito = ?`,

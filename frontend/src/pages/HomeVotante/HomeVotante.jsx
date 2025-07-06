@@ -1,85 +1,81 @@
-import Sidebar from '../../components/Sidebar/Sidebar';
-import Panel from '../../components/Panel/Panel';
-import { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './HomeVotante.css';
-import { jwtDecode } from 'jwt-decode';
+import Sidebar from '../../components/Sidebar/Sidebar';
 import { useNavigate } from 'react-router-dom';
-
+import { obtenerVotanteDeStorage, eliminarVotanteDeStorage } from '../../utils/loginVotanteUtils';
 
 export default function HomeVotante() {
   const [active, setActive] = useState('bienvenida');
   const [votanteData, setVotanteData] = useState(null);
-  const [estadoVoto, setEstadoVoto] = useState(null); // { fueEmitido: true/false, esObservado: true/false }
+  const [estadoVoto, setEstadoVoto] = useState(null);
   const [estadoMesa, setEstadoMesa] = useState(null);
   const [loading, setLoading] = useState(true);
-  //const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  
   const titles = {
     bienvenida: 'Bienvenido al sistema de votación',
     votar: 'Emitir Voto',
-    estado: 'Estado del Proceso Electoral'
+    estado: 'Estado del Proceso Electoral',
   };
-
 
   useEffect(() => {
-  const fetchDatos = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
+    const fetchDatos = async () => {
+      const votante = obtenerVotanteDeStorage();
 
-    const decoded = jwtDecode(token);
-    const ci = decoded.ci;
+      if (!votante) {
+        alert("Sesión no encontrada. Redirigiendo al login...");
+        navigate("/loginVotante");
+        return;
+      }
 
-    try {
-      // 1. Obtener datos del votante por cédula
-      const resVotante = await fetch(`http://localhost:3000/votantes/${ci}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await resVotante.json();
-      setVotanteData(data);
+      try {
+        setVotanteData(votante);
+        console.log('Datos del votante:', votante);
+        const credencial = votante.credencial;
 
-      const credencial = data.credencial;
+        // 1. Obtener asignación circuito-elección
+        const resAsignacion = await fetch(`http://localhost:3000/votantes/asignacion/${credencial}`);
+        if (!resAsignacion.ok) throw new Error('No se encontró asignación');
+        const { idEleccion, idCircuito } = await resAsignacion.json();
 
-      // 2. Obtener asignación real de circuito y elección
-      const resAsignacion = await fetch(`http://localhost:3000/votacion/asignacion/${credencial}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const { idEleccion, idCircuito } = await resAsignacion.json();
+        // 2. Estado del voto
+        const resVoto = await fetch(`http://localhost:3000/votantes/estado/${credencial}/${idEleccion}/${idCircuito}`);
+        if (!resVoto.ok) throw new Error('No se encontró el estado del voto');
+        const voto = await resVoto.json();
+        setEstadoVoto(voto);
+        console.log('Estado del voto:', voto);
 
-      // 3. Estado de voto
-      const resVoto = await fetch(`http://localhost:3000/votacion/estado/${credencial}/${idEleccion}/${idCircuito}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const voto = await resVoto.json();
-      setEstadoVoto(voto);
+        // 3. Estado de la mesa
+        const resMesa = await fetch(`http://localhost:3000/eleccionCircuito/estadoMesa/${idEleccion}/${idCircuito}`);
+        if (!resMesa.ok) throw new Error('No se encontró el estado de la mesa');
+        const mesa = await resMesa.json();
+        setEstadoMesa(mesa);
+      } catch (err) {
+        console.error('Error cargando datos del votante:', err);
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      // 4. Estado general de la mesa
-      const resMesa = await fetch(`http://localhost:3000/votacion/estadoMesa/${idEleccion}/${idCircuito}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const mesa = await resMesa.json();
-      setEstadoMesa(mesa);
+    fetchDatos();
+  }, [navigate]);
 
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const handleLogout = () => {
+    eliminarVotanteDeStorage();
+    navigate('/loginVotante');
   };
 
-  fetchDatos();
-}, []);
-
   if (loading) return <div>Cargando información...</div>;
-  //if (!votanteData) return <div>No se encontró información del votante.</div>;
-  
 
   return (
     <div className="homevotante-container">
       <Sidebar setActive={setActive} rol="votante" />
       <div className="main-content">
-        <h2>{titles[active]}</h2>
+        <div className="top-bar">
+          <h2>{titles[active]}</h2>
+          <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
+        </div>
 
         {active === 'bienvenida' && (
           <div>
@@ -106,9 +102,7 @@ export default function HomeVotante() {
           ) : estadoMesa?.mesaCerrada ? (
             <p>La mesa ya fue cerrada, no es posible emitir el voto.</p>
           ) : (
-            <button onClick={() => navigate('/votacion')}>
-              Emitir mi voto
-            </button>
+            <button onClick={() => navigate('/votacion')}>Emitir mi voto</button>
           )
         )}
 

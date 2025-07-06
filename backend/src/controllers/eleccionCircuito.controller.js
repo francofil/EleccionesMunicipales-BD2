@@ -110,6 +110,48 @@ exports.getEstado = async (req, res) => {
   }
 };
 
+
+// Estado básico público de una mesa (para votante)
+exports.getEstadoMesaPublico = async (req, res) => {
+  const { idEleccion, idCircuito } = req.params;
+
+  try {
+    // Cantidad de votantes habilitados
+    const [[{ totalHabilitados }]] = await pool.query(
+      `SELECT COUNT(*) AS totalHabilitados
+       FROM ListaVotacion_Circuito_Eleccion
+       WHERE idEleccion = ? AND idCircuito = ?`,
+      [idEleccion, idCircuito]
+    );
+
+    // Votos emitidos (totales y observados)
+    const [votos] = await pool.query(
+      `SELECT fueEmitido FROM Votante_Circuito_Eleccion
+       WHERE idEleccion = ? AND idCircuito = ?`,
+      [idEleccion, idCircuito]
+    );
+    const emitidos = votos.filter(v => v.fueEmitido).length;
+
+    // Estado de la mesa
+    const [[{ mesaCerrada }]] = await pool.query(
+      `SELECT mesaCerrada FROM Circuito_Eleccion
+       WHERE idEleccion = ? AND idCircuito = ?`,
+      [idEleccion, idCircuito]
+    );
+
+    res.status(200).json({
+      mesaCerrada,
+      habilitados: totalHabilitados,
+      emitidos
+    });
+
+  } catch (error) {
+    console.error('Error al consultar estado público de mesa:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
+
 //POST, creamos la relacion circuito - eleccion
 exports.vincularCircuitoAEleccion = async (req, res) => {
   const { idEleccion, idCircuito, idMesa, ciAgente } = req.body;
@@ -154,5 +196,47 @@ exports.getCircuitoDelPresidente = async (req, res) => {
   } catch (error) {
     console.error('Error en obtenerCircuitoPorPresidente:', error);
     res.status(500).json({ error: error.message });
+  }
+};
+
+exports.cerrarMesa = async (req, res) => {
+  const { idEleccion, idCircuito } = req.params;
+
+  try {
+    // 1. Verificamos si ya está cerrada
+    const [estado] = await pool.query(
+      'SELECT mesaCerrada FROM Eleccion_Circuito WHERE idEleccion = ? AND idCircuito = ?',
+      [idEleccion, idCircuito]
+    );
+
+    if (!estado.length) {
+      return res.status(404).json({ error: 'Circuito o elección no encontrada' });
+    }
+
+    if (estado[0].mesaCerrada) {
+      return res.status(400).json({ error: 'La mesa ya está cerrada' });
+    }
+
+    // 2. Se cierra la mesa
+    await pool.query(
+      'UPDATE Eleccion_Circuito SET mesaCerrada = true WHERE idEleccion = ? AND idCircuito = ?',
+      [idEleccion, idCircuito]
+    );
+
+    // 3. Devolver resultados
+    const [resultados] = await pool.query(`
+      SELECT l.nombreLista, 
+             COUNT(v.idVoto) as votos,
+             SUM(v.votoObservado) as votosObservados
+      FROM Voto v
+      JOIN Lista l ON v.idLista = l.idLista
+      WHERE v.idEleccion = ? AND v.idCircuito = ?
+      GROUP BY l.nombreLista
+    `, [idEleccion, idCircuito]);
+
+    res.status(200).json(resultados);
+  } catch (err) {
+    console.error("Error al cerrar mesa:", err);
+    res.status(500).json({ error: 'Error interno al cerrar la mesa' });
   }
 };
