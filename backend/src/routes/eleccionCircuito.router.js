@@ -1,7 +1,8 @@
-const express = require('express');
+  const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/eleccionCircuito.controller.js');
 const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+
 
 // Obtener estado del circuito en una elección (acceso general)
 router.get('/estado/:idEleccion/:idCircuito', controller.obtenerCircuitoDeEleccion);
@@ -22,9 +23,13 @@ router.get('/habilitados/:idEleccion/:idCircuito/:credencial', authenticateToken
 router.get('/estado/:idEleccion/:idCircuito', authenticateToken, controller.getEstado);
 
 //VEr estado de la mesa INFO NECESARIA PARA VOTANTE
-router.get('/estadoMesa/:idEleccion/:idCircuito', votacionController.getEstadoMesaPublico);
+router.get('/estadoMesa/:idEleccion/:idCircuito', controller.getEstadoMesaPublico);
 
+router.put('/cerrarMesa/:idEleccion/:idCircuito', authenticateToken, controller.cerrarMesa);
 
 router.post('/vincular', authenticateToken, authorizeRoles('admin'), controller.vincularCircuitoAEleccion);
+
+router.get('/porPresidente/:ci', authenticateToken, controller.getCircuitoDelPresidente);
+
 
 module.exports = router;

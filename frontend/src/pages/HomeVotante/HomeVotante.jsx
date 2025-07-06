@@ -30,6 +30,7 @@ export default function HomeVotante() {
 
       try {
         setVotanteData(votante);
+        console.log('Datos del votante:', votante);
         const credencial = votante.credencial;
 
         // 1. Obtener asignación circuito-elección
@@ -42,6 +43,7 @@ export default function HomeVotante() {
         if (!resVoto.ok) throw new Error('No se encontró el estado del voto');
         const voto = await resVoto.json();
         setEstadoVoto(voto);
+        console.log('Estado del voto:', voto);
 
         // 3. Estado de la mesa
         const resMesa = await fetch(`http://localhost:3000/eleccionCircuito/estadoMesa/${idEleccion}/${idCircuito}`);

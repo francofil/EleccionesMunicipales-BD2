@@ -69,7 +69,7 @@ exports.guardarVotoSecreto = async (req, res) => {
     idEleccion,
     idCircuito,
   } = req.body;
-  
+
   try {
     if (
       !credencial ||
@@ -124,3 +124,7 @@ exports.guardarVotoSecreto = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+

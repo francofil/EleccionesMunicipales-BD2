@@ -92,14 +92,13 @@ exports.remove = async (req, res) => {
 
 // Obtener circuito y elección asignados a un votante
 exports.getAsignacion = async (req, res) => {
-  const { credencial } = req.params;
 
   try {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       `SELECT idEleccion, idCircuito 
        FROM ListaVotacion_Circuito_Eleccion 
        WHERE credencial = ? 
-       LIMIT 1`, [credencial]
+       LIMIT 1`, [req.params.credencial]
     );
 
     if (rows.length === 0) {
@@ -118,7 +117,7 @@ exports.getEstado = async (req, res) => {
   const { credencial, idEleccion, idCircuito } = req.params;
 
   try {
-    const [rows] = await db.query(
+    const [rows] = await pool.query(
       `SELECT fueEmitido, esObservado 
        FROM Votante_Circuito_Eleccion 
        WHERE credencial = ? AND idEleccion = ? AND idCircuito = ?`,
