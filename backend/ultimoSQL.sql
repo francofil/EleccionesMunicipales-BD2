@@ -184,17 +184,16 @@ CREATE TABLE Votante_Circuito_Eleccion (
 -- Tabla Voto
 CREATE TABLE Voto (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    idEleccion INT,
-    idCircuito INT,
-    idpapeleta INT,
-    fueEnBlanco BOOLEAN,
-    fueAnulado BOOLEAN,
-    fecha DATE,
+    idEleccion INT NOT NULL,
+    idCircuito INT NOT NULL,
+    idPapeleta INT NULL,
+    fueEnBlanco BOOLEAN DEFAULT FALSE,
+    fueAnulado BOOLEAN DEFAULT FALSE,
+    fecha DATE NOT NULL,
     FOREIGN KEY (idEleccion) REFERENCES Eleccion(id),
     FOREIGN KEY (idCircuito) REFERENCES Circuito(id),
     FOREIGN KEY (idPapeleta) REFERENCES Papeleta(id)
 );
-
 
 
 -- Elección presidencial
