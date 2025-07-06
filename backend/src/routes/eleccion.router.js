@@ -1,24 +1,22 @@
+// backend/src/routes/eleccion.router.js
+
 const express = require('express');
 const router = express.Router();
-const circuitoController = require('../controllers/circuito.controller');
-const { authenticateToken, authorizeRoles } = require('../middleware/authMiddleware');
+const eleccionController = require('../controllers/eleccion.controller'); // Asegurate de que el archivo del controller se llame así
 
-// Obtener todos los circuitos
-router.get('/', authenticateToken, circuitoController.getAll);
+// Obtener todas las elecciones
+router.get('/', eleccionController.getAll);
 
-// Obtener un circuito específico
-router.get('/:id', authenticateToken, circuitoController.getOne);
+// Obtener una elección por ID
+router.get('/:id', eleccionController.getOne);
 
-// Crear un nuevo circuito (solo admin o presidente)
-router.post('/', authenticateToken, authorizeRoles('admin', 'presidente'), circuitoController.create);
+// Crear una nueva elección
+router.post('/', eleccionController.create);
 
-// Actualizar un circuito (solo admin o presidente)
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'presidente'), circuitoController.update);
+// Actualizar una elección existente
+router.put('/:id', eleccionController.update);
 
-// Eliminar un circuito (solo admin o presidente)
-router.delete('/:id', authenticateToken, authorizeRoles('admin', 'presidente'), circuitoController.remove);
-
-// Obtener los votantes de un circuito
-router.get('/:id/votantes', authenticateToken, circuitoController.getVotantesByCircuito);
+// Eliminar una elección
+router.delete('/:id', eleccionController.remove);
 
 module.exports = router;

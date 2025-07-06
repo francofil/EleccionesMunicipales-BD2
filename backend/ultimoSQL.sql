@@ -1,4 +1,5 @@
 
+DROP DATABASE IF EXISTS eleccionesMunicipales;
 CREATE DATABASE IF NOT EXISTS eleccionesMunicipales;
 USE eleccionesMunicipales;
 
@@ -22,32 +23,31 @@ CREATE TABLE Eleccion (
     tipo VARCHAR(50)
 );
 
+-- Tabla Partido
+CREATE TABLE Partido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100),
+    direccion VARCHAR(255),
+    autoridades TEXT
+);
+
 -- Tabla Papeleta (superclase)
 CREATE TABLE Papeleta (
     id INT AUTO_INCREMENT PRIMARY KEY,
     color VARCHAR(30),
     eleccion INT,
-    FOREIGN KEY (eleccion) REFERENCES Eleccion(id)
+    idPartido INT,  -- <== NUEVO
+    FOREIGN KEY (eleccion) REFERENCES Eleccion(id),
+    FOREIGN KEY (idPartido) REFERENCES Partido(id)
 );
 
--- Tabla Partido
-CREATE TABLE Partido (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    idPapeleta INT,
-    nombre VARCHAR(100),
-    direccion VARCHAR(255),
-    autoridades TEXT,
-    FOREIGN KEY (idPapeleta) REFERENCES Papeleta(id)
-);
 
 -- Subclases de Papeleta
 CREATE TABLE Lista (
     id INT PRIMARY KEY,
     organo VARCHAR(50),
     departamento VARCHAR(100),
-    idPartido INT,
-    FOREIGN KEY (id) REFERENCES Papeleta(id),
-    FOREIGN KEY (idPartido) REFERENCES Partido(id)
+    FOREIGN KEY (id) REFERENCES Papeleta(id)
 );
 
 CREATE TABLE Balotaje (
@@ -184,17 +184,16 @@ CREATE TABLE Votante_Circuito_Eleccion (
 -- Tabla Voto
 CREATE TABLE Voto (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    idEleccion INT,
-    idCircuito INT,
-    idpapeleta INT,
-    fueEnBlanco BOOLEAN,
-    fueAnulado BOOLEAN,
-    fecha DATE,
+    idEleccion INT NOT NULL,
+    idCircuito INT NOT NULL,
+    idPapeleta INT NULL,
+    fueEnBlanco BOOLEAN DEFAULT FALSE,
+    fueAnulado BOOLEAN DEFAULT FALSE,
+    fecha DATE NOT NULL,
     FOREIGN KEY (idEleccion) REFERENCES Eleccion(id),
     FOREIGN KEY (idCircuito) REFERENCES Circuito(id),
     FOREIGN KEY (idPapeleta) REFERENCES Papeleta(id)
 );
-
 
 
 -- Elección presidencial
@@ -422,32 +421,42 @@ VALUES ('A200028', '2025-10-27', '016:00:00', FALSE, TRUE, 1, 1);
 INSERT INTO Votante_Circuito_Eleccion (credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito)
 VALUES ('A200029', '2025-10-27', '017:00:00', FALSE, TRUE, 1, 1);
 
--- Insercion de Papeletas
-INSERT INTO Papeleta (id, color, eleccion) VALUES (1, 'Rojo', 1);
-INSERT INTO Papeleta (id, color, eleccion) VALUES (2, 'Verde', 1);
-INSERT INTO Papeleta (id, color, eleccion) VALUES (3, 'Azul', 1);
+-- Partido
+INSERT INTO Partido (id, nombre, direccion, autoridades)
+VALUES (1, 'Partido Rojo', 'Calle Rojo 123', 'Presidente: RojoPres, Vice: RojoVice');
 
--- Insercion Partidos
-INSERT INTO Partido (id, idPapeleta, nombre, direccion, autoridades)
-VALUES (1, 1, 'Partido Rojo', 'Calle Rojo 123', 'Presidente: RojoPres, Vice: RojoVice');
-INSERT INTO Partido (id, idPapeleta, nombre, direccion, autoridades)
-VALUES (2, 2, 'Partido Verde', 'Calle Verde 123', 'Presidente: VerdePres, Vice: VerdeVice');
-INSERT INTO Partido (id, idPapeleta, nombre, direccion, autoridades)
-VALUES (3, 3, 'Partido Azul', 'Calle Azul 123', 'Presidente: AzulPres, Vice: AzulVice');
+INSERT INTO Partido (id, nombre, direccion, autoridades)
+VALUES (2, 'Partido Verde', 'Calle Verde 123', 'Presidente: VerdePres, Vice: VerdeVice');
+
+INSERT INTO Partido (id, nombre, direccion, autoridades)
+VALUES (3, 'Partido Azul', 'Calle Azul 123', 'Presidente: AzulPres, Vice: AzulVice');
+
+
+-- Insercion Papeletas
+INSERT INTO Papeleta (id, color, eleccion, idPartido) VALUES (1, 'Rojo', 1, 1);
+INSERT INTO Papeleta (id, color, eleccion, idPartido) VALUES (2, 'Verde', 1, 2);
+INSERT INTO Papeleta (id, color, eleccion, idPartido) VALUES (3, 'Azul', 1, 3);
 
 -- Listas
-INSERT INTO Lista (id, organo, departamento, idPartido)
-VALUES (1, 'Presidencia', 'Montevideo', 1);
-INSERT INTO Lista (id, organo, departamento, idPartido)
-VALUES (2, 'Presidencia', 'Montevideo', 2);
-INSERT INTO Lista (id, organo, departamento, idPartido)
-VALUES (3, 'Presidencia', 'Montevideo', 3);
+INSERT INTO Lista (id, organo, departamento)
+VALUES (1, 'Presidencia', 'Montevideo');
+
+INSERT INTO Lista (id, organo, departamento)
+VALUES (2, 'Presidencia', 'Montevideo');
+
+INSERT INTO Lista (id, organo, departamento)
+VALUES (3, 'Presidencia', 'Montevideo');
+
 INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
 VALUES ('300001', 'C1000', 'CandidatoRojo', 'ApRojo', '1970-01-01');
 INSERT INTO Candidato (ci, idPartido) VALUES ('300001', 1);
+
 INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
 VALUES ('300002', 'C2000', 'CandidatoVerde', 'ApVerde', '1970-01-01');
 INSERT INTO Candidato (ci, idPartido) VALUES ('300002', 2);
+
 INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
 VALUES ('300003', 'C3000', 'CandidatoAzul', 'ApAzul', '1970-01-01');
 INSERT INTO Candidato (ci, idPartido) VALUES ('300003', 3);
+
+SELECT * FROM ListaVotacion_Circuito_Eleccion WHERE credencial = 'A200000';

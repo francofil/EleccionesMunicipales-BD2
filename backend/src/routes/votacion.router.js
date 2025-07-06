@@ -11,6 +11,6 @@ const controller = require('../controllers/votacion.controller');
 router.post('/emitir', controller.emitirConstanciaVoto);
 
 // POST /votacion/secreto - Guardar el voto de forma anónima (estructura preparada)
-router.post('/secreto', controller.guardarVotoSecreto);
+router.post('/registrarVoto', controller.registrarVoto);
 
 module.exports = router;
