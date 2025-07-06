@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/votacion.controller');
-const { authenticateToken } = require('../middleware/authMiddleware'); // IMPORTACIÓN correcta
 
-router.put('/cerrarMesa/:idEleccion/:idCircuito', authenticateToken, controller.cerrarMesa);
+const controller = require('../controllers/votacion.controller');
+
+router.put('/cerrarMesa/:idEleccion/:idCircuito', authMiddleware, controller.cerrarMesa);
+
+// POST /votacion/emitir - Registrar constancia de voto (sin guardar el voto)
+router.post('/emitir', controller.emitirConstanciaVoto);
+
+// POST /votacion/secreto - Guardar el voto de forma anónima (estructura preparada)
+router.post('/secreto', controller.guardarVotoSecreto);
 
 module.exports = router;
