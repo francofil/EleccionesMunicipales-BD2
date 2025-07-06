@@ -17,7 +17,7 @@ const circuitoRoutes = require('./routes/circuito.router.js')
 const eleccionCircuitoRoutes = require('./routes/eleccionCircuito.router.js')
 const votacionRoutes = require('./routes/votacion.router.js');
 const eleccionRoutes = require('./routes/eleccion.router.js');
-const papeletasRoutes = require('./routes/papeletas.router.js');
+const papeletasRoutes = require('./routes/papeleta.router.js');
 const presidenteRoutes = require('./routes/presidente.router');
 
 
