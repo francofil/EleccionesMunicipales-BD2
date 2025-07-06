@@ -16,7 +16,7 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'presidente'), votan
 router.get('/:ci', votanteController.getOneCI);
 
 // Obtener votante por credencial
-router.get('/:credencial ', votanteController.getOneCC);
+router.get('/credencial/:credencial', votanteController.getOneCC);
 
 
 router.get('/estado/:credencial/:idEleccion/:idCircuito', votanteController.getEstado);

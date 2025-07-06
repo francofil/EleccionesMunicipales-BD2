@@ -1,37 +1,31 @@
-import { useState, useEffect } from 'react';
+// src/pages/CircuitoPresidentePage/CircuitoPresidentePage.jsx
+import { useState } from 'react';
 import CircuitosList from '../../components/CircuitosList/CircuitosList';
 import CircuitoEstadoModal from '../../components/CircuitoEstadoModal/CircuitoEstadoModal';
+import { useCircuitoPresidente } from '../../hooks/useCircuitoPresidente';
 
 export default function CircuitoPresidentePage() {
-  const [circuito, setCircuito] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { circuito, loading, error } = useCircuitoPresidente();
   const [modalCircuito, setModalCircuito] = useState(null);
 
-  const idEleccionActual = 1;
-
-  useEffect(() => {
-    // Hardcodeamos un circuito de ejemplo:
-    const circuitoFalso = 1;
-    setCircuito(circuitoFalso);
-    setLoading(false);
-  }, []);
-
-  const handleEstado = (circuito) => setModalCircuito(circuito);
-
-  if (loading) return <p>Cargando circuito...</p>;
+  if (loading) return <p>Cargando circuito…</p>;
+  if (error)   return <p style={{ color: 'red' }}>⚠ {error}</p>;
 
   return (
     <>
-      <h1>Mi circuito asignado</h1>
-      
-      <CircuitosList
-        circuitos={[circuito]}
-        onEstado={handleEstado}
-      />
+
+      {circuito ? (
+        <CircuitosList
+          circuitos={[circuito]}
+          onEstado={setModalCircuito}
+        />
+      ) : (
+        <p>No tenés un circuito asignado.</p>
+      )}
 
       {modalCircuito && (
         <CircuitoEstadoModal
-          idEleccion={idEleccionActual}
+          idEleccion={circuito.idEleccion}
           circuito={modalCircuito}
           onClose={() => setModalCircuito(null)}
         />

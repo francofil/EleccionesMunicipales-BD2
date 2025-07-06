@@ -37,6 +37,17 @@ export async function createCircuito(circuitoData) {
   return await res.json(); // { message: 'Circuito creado', id }
 }
 
+export async function obtenerCircuitoPorId(id) {
+  const token = localStorage.getItem('token');
+  const res = await fetch(`${baseUrl}/circuito/${id}`, {
+    headers:{
+       'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();   // { id, zona, direccion, tipo, accesible, … }
+}
+
 export async function deleteCircuito(id) {
   const token = localStorage.getItem('token');
 

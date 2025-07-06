@@ -180,11 +180,22 @@ exports.getCircuitoDelPresidente = async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      `SELECT ec.idEleccion, ec.idCircuito, ec.mesaCerrada
+      `SELECT 
+          ec.idEleccion, 
+          ec.idCircuito, 
+          ec.mesaCerrada,
+          c.zona, 
+          c.tipo, 
+          c.accesible, 
+          c.direccion, 
+          c.idEstablecimiento, 
+          c.idDepartamento
        FROM Circuito_Eleccion ec
-       JOIN Circuito c ON ec.idCircuito = c.idCircuito
-       JOIN Usuario u ON c.idPresidente = u.idUsuario
-       WHERE u.ci = ?`,
+       JOIN Circuito c ON ec.idCircuito = c.id
+       JOIN Mesa m ON ec.idMesa = m.id
+       JOIN Mesa_Integrante mi ON mi.idMesa = m.id
+       JOIN IntegranteMesa im ON mi.ciIntegrante = im.ci
+       WHERE im.ci = ? AND im.rol = 'Presidente'`,
       [ciPresidente]
     );
 

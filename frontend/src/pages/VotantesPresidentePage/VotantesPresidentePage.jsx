@@ -1,3 +1,4 @@
+// src/pages/VotantesPresidentePage/VotantesPresidentePage.jsx
 import { useState } from 'react';
 import { useVotantesPresidente } from '../../hooks/useVotantesPresidente';
 import VotantesList from '../../components/VotantesList/VotantesList';
@@ -11,12 +12,12 @@ export default function VotantesPresidentePage() {
     v.credencial.toLowerCase().includes(filtro.toLowerCase())
   );
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (loading) return <p>Cargando votantes...</p>;
+  if (error) return <p style={{ color: 'red' }}>⚠ {error}</p>;
 
   return (
     <div className="votantes-container">
-      <h1>Votantes del Circuito #1 </h1>
+      <h1>Votantes de mi circuito</h1>
 
       <Buscador
         placeholder="Buscar por credencial..."
