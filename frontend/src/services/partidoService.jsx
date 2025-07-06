@@ -5,7 +5,7 @@ const authHeaders = () => ({
 });
 
 export async function obtenerPartidos() {
-  const res = await fetch(`${baseUrl}/partidos`, {
+  const res = await fetch(`${baseUrl}/partido`, {
     headers: authHeaders()
   });
 
