@@ -59,71 +59,84 @@ exports.emitirConstanciaVoto = async (req, res) => {
 };
 
 //Guardar que se voto, no quien
-exports.guardarVotoSecreto = async (req, res) => {
+exports.registrarVoto = async (req, res) => {
   const {
     credencial,
-    fecha,
-    hora,
-    esObservado,
-    fueEmitido,
     idEleccion,
     idCircuito,
+    idPapeleta,
+    fueEnBlanco,
+    fueAnulado,
+    fecha,
+    hora
   } = req.body;
 
+  // Validaciones mínimas
+  if (!credencial || !idEleccion || !idCircuito || !fecha || !hora) {
+    return res.status(400).json({ error: 'Faltan datos obligatorios' });
+  }
+
   try {
-    if (
-      !credencial ||
-      !fecha ||
-      !hora ||
-      typeof esObservado !== "boolean" ||
-      typeof fueEmitido !== "boolean" ||
-      !idEleccion ||
-      !idCircuito
-    ) {
-      return res
-        .status(400)
-        .json({
-          error: "Faltan datos obligatorios o hay datos mal formateados",
-        });
-    }
-    //Verifico si ya voto
+    // Validar que el votante no haya votado ya en esta elección
     const [yaVoto] = await pool.query(
-      `SELECT * FROM Votante_Circuito_Eleccion 
-             WHERE credencial = ? AND idEleccion = ?`,
+      `SELECT 1 FROM Votante_Circuito_Eleccion 
+       WHERE credencial = ? AND idEleccion = ?`,
       [credencial, idEleccion]
     );
 
     if (yaVoto.length > 0) {
-      return res
-        .status(409)
-        .json({ error: "El votante ya emitió su voto en esta elección" });
+      return res.status(409).json({ error: 'El votante ya emitió su voto en esta elección' });
     }
 
+    // Validar si el votante está habilitado para ese circuito
     const [habilitado] = await pool.query(
-      `SELECT * FROM ListaVotacion_Circuito_Eleccion 
-             WHERE idEleccion = ? AND idCircuito = ? AND credencial = ?`,
+      `SELECT 1 FROM ListaVotacion_Circuito_Eleccion 
+       WHERE idEleccion = ? AND idCircuito = ? AND credencial = ?`,
       [idEleccion, idCircuito, credencial]
     );
 
-    //SI es = a 0 es true sino es false
     const esObservado = habilitado.length === 0;
 
-    const [rows] = await pool.query(
-      "INSERT INTO Votante_Circuito_Eleccion (credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito]
+    // Si seleccionó una papeleta, validar que pertenezca a esa elección
+    if (idPapeleta && !fueEnBlanco && !fueAnulado) {
+      const [papeletaOk] = await pool.query(
+        `SELECT 1 FROM Papeleta WHERE id = ? AND eleccion = ?`,
+        [idPapeleta, idEleccion]
+      );
+      if (papeletaOk.length === 0) {
+        return res.status(400).json({ error: 'La papeleta no corresponde a esta elección' });
+      }
+    }
+
+    // Insertar en tabla Voto (contenido del voto)
+    const [votoInsertado] = await pool.query(
+      `INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [idEleccion, idCircuito, idPapeleta || null, fueEnBlanco, fueAnulado, fecha]
+    );
+
+    // Insertar en tabla de trazabilidad (quién votó, cuándo, cómo)
+    await pool.query(
+      `INSERT INTO Votante_Circuito_Eleccion 
+       (credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [credencial, fecha, hora, esObservado, true, idEleccion, idCircuito]
     );
 
     res.status(201).json({
       message: esObservado
-        ? "Voto registrado como observado"
-        : "Voto emitido correctamente",
+        ? 'Voto observado registrado con éxito'
+        : 'Voto registrado con éxito',
       observacion: esObservado,
-      id: result.insertId,
+      votoId: votoInsertado.insertId
     });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al registrar el voto:', error);
+    res.status(500).json({ error: 'Error interno al registrar el voto' });
   }
 };
+
 
 
 
