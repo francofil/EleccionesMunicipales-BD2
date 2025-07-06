@@ -8,6 +8,7 @@ import PartidosPage from '../../pages/PartidosPage/PartidosPage';
 import ResultadosPage from '../../pages/ResultadosPage/ResultadosPage';
 import VotantesPresidentePage from '../../pages/VotantesPresidentePage/VotantesPresidentePage';
 import CircuitoPresidentePage from '../../pages/CircuitoPresidentePage/CircuitoPresidentePage';
+import ListaPage from '../../pages/ListaPage/ListaPage'
 export default function Panel({ title, active, idCircuito,idEleccion }) {
   const renderSection = () => {
     switch (active) {
@@ -34,6 +35,9 @@ export default function Panel({ title, active, idCircuito,idEleccion }) {
                  idEleccion={idEleccion}/>
       case 'circuito':
         return <CircuitoPresidentePage/>
+      
+      case 'lista':
+        return <ListaPage/>
       default:
         // Si es "bienvenida" (o no existe la sección aún) mostramos sólo el título
         return null;

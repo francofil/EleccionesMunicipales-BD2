@@ -52,7 +52,7 @@ export default function Votacion() {
     const hora = new Date().toTimeString().split(' ')[0];
 
     try {
-      await fetch('http://localhost:3000/votacion/emitirConstanciaVoto', {
+      await fetch('http://localhost:3000/votacion/emitir', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,14 +63,14 @@ export default function Votacion() {
         })
       });
 
-      await fetch('http://localhost:3000/votacion/guardarVotoSecreto', {
+      await fetch('http://localhost:3000/votacion/secreto', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          credencial, fecha, hora, esObservado, fueEmitido: true, idEleccion, idCircuito
+          credencial, fecha, hora, esObservado, fueEmitido: true, idEleccion, idCircuito, idLista: seleccion
         })
       });
 

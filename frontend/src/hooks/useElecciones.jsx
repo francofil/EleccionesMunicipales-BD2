@@ -19,5 +19,5 @@ export function useElecciones() {
     })();
   }, []);
 
-  return { elecciones, loading, error };
+  return { elecciones, setElecciones, loading, error };
 }

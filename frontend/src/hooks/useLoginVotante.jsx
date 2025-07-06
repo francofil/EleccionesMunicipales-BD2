@@ -17,6 +17,7 @@ export function useLogin() {
       const votante = await loginVotante({ cedula, credencial }); // ⚠️ Esperar la promesa
 
       guardarVotanteEnStorage(votante);
+       localStorage.setItem('credencial', votante.credencial);
 
       navigate("/homeVotante");
     } catch (err) {

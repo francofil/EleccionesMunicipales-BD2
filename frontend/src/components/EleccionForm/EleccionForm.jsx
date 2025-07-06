@@ -1,11 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createEleccion, updateEleccion } from '../../services/eleccionService';
-import './EleccionForm.css'
-export default function EleccionForm({ onClose, eleccion }) {
+import './EleccionForm.css';
+
+export default function EleccionForm({ onClose, onSaved, eleccion }) {
   const [form, setForm] = useState({
-    fecha: eleccion?.fecha || '',
-    tipo: eleccion?.tipo || ''
+    fecha: '',
+    tipo: ''
   });
+  const [mensaje, setMensaje] = useState('');
+  const [error, setError] = useState('');
+
+  // Actualiza el form cuando recibís eleccion para editar
+  useEffect(() => {
+    if (eleccion) {
+      setForm({
+        fecha: eleccion.fecha ? eleccion.fecha.substring(0, 10) : '', // formato yyyy-mm-dd
+        tipo: eleccion.tipo || ''
+      });
+    } else {
+      setForm({ fecha: '', tipo: '' });
+    }
+  }, [eleccion]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -14,24 +29,32 @@ export default function EleccionForm({ onClose, eleccion }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMensaje('');
+    setError('');
+
     try {
       if (eleccion) {
         await updateEleccion(eleccion.id, form);
-        alert('Elección actualizada');
+        onSaved?.({ ...form, id: eleccion.id });
+        setMensaje('✅ Elección actualizada correctamente.');
       } else {
-        await createEleccion(form);
-        alert('Elección creada');
+        const nueva=await createEleccion(form);
+        onSaved?.({ ...form, id: nueva.id });
+        setMensaje('✅ Elección creada correctamente.');
       }
-      onClose();
-      window.location.reload();
-    } catch (error) {
-      alert('Error: ' + error.message);
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+    } catch (err) {
+      setError('⚠ ' + err.message);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="formulario-eleccion">
-      <h3>{eleccion ? 'Editar' : 'Nueva'} Elección</h3>
+      <h3>{eleccion ? 'Editar Elección' : 'Nueva Elección'}</h3>
+      {mensaje && <p className="mensaje-exito">{mensaje}</p>}
+      {error && <p className="mensaje-error">{error}</p>}
 
       <label>
         Fecha:
@@ -59,8 +82,10 @@ export default function EleccionForm({ onClose, eleccion }) {
         </select>
       </label>
 
-      <button type="submit">Guardar</button>
-      <button type="button" onClick={onClose}>Cancelar</button>
+      <div className="botones-formulario">
+        <button type="submit">Guardar</button>
+        <button type="button" className="boton-cancelar" onClick={onClose}>Cancelar</button>
+      </div>
     </form>
   );
 }

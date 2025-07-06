@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './HomeVotante.css';
 import Sidebar from '../../components/Sidebar/Sidebar';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation  } from 'react-router-dom';
 import { obtenerVotanteDeStorage, eliminarVotanteDeStorage } from '../../utils/loginVotanteUtils';
 
 export default function HomeVotante() {
@@ -11,6 +11,7 @@ export default function HomeVotante() {
   const [estadoMesa, setEstadoMesa] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const titles = {
     bienvenida: 'Bienvenido al sistema de votación',
@@ -35,8 +36,15 @@ export default function HomeVotante() {
 
         // 1. Obtener asignación circuito-elección
         const resAsignacion = await fetch(`http://localhost:3000/votantes/asignacion/${credencial}`);
-        if (!resAsignacion.ok) throw new Error('No se encontró asignación');
-        const { idEleccion, idCircuito } = await resAsignacion.json();
+        const asignacion = await resAsignacion.json();
+        if (!resAsignacion.ok || !asignacion.idEleccion || !asignacion.idCircuito) {
+          console.warn('Asignación no encontrada o incompleta:', asignacion);
+          setEstadoVoto({ fueEmitido: false, esObservado: false });
+          setEstadoMesa(null);
+          setLoading(false);
+          return;
+        }
+        const { idEleccion, idCircuito } = asignacion;
 
         // 2. Estado del voto
         const resVoto = await fetch(`http://localhost:3000/votantes/estado/${credencial}/${idEleccion}/${idCircuito}`);
@@ -50,6 +58,7 @@ export default function HomeVotante() {
         if (!resMesa.ok) throw new Error('No se encontró el estado de la mesa');
         const mesa = await resMesa.json();
         setEstadoMesa(mesa);
+
       } catch (err) {
         console.error('Error cargando datos del votante:', err);
         alert(err.message);
@@ -59,7 +68,7 @@ export default function HomeVotante() {
     };
 
     fetchDatos();
-  }, [navigate]);
+  }, [location, navigate]);
 
   const handleLogout = () => {
     eliminarVotanteDeStorage();
@@ -73,9 +82,11 @@ export default function HomeVotante() {
       <Sidebar setActive={setActive} rol="votante" />
       <div className="main-content">
         <div className="top-bar">
-          <h2>{titles[active]}</h2>
-          <button onClick={handleLogout} className="logout-button">Cerrar sesión</button>
+      
+          <button onClick={handleLogout} className="logout-button estilizado">Cerrar sesión</button>
         </div>
+
+        <h2 className="titulo-principal">{titles[active]}</h2>
 
         {active === 'bienvenida' && (
           <div>
@@ -85,13 +96,10 @@ export default function HomeVotante() {
             <p><strong>Tipo de voto:</strong> {estadoVoto?.esObservado ? 'Observado' : 'Regular'}</p>
 
             {estadoVoto?.fueEmitido && (
-              <a
-                href={`http://localhost:3000/votacion/constancia/${votanteData?.credencial}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ver constancia de voto
-              </a>
+              <div className="constancia-texto mensaje-confirmacion">
+                ✅ Se confirma que ha emitido su voto en esta elección.  
+                La constancia ha sido registrada correctamente.
+              </div>
             )}
           </div>
         )}
@@ -102,7 +110,9 @@ export default function HomeVotante() {
           ) : estadoMesa?.mesaCerrada ? (
             <p>La mesa ya fue cerrada, no es posible emitir el voto.</p>
           ) : (
-            <button onClick={() => navigate('/votacion')}>Emitir mi voto</button>
+            <div className="boton-voto-wrapper">
+            <button onClick={() => navigate('/votacion')}className="emitir-voto-button">Emitir mi voto</button>
+            </div>
           )
         )}
 

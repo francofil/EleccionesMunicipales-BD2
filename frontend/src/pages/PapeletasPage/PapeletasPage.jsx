@@ -1,26 +1,43 @@
+import { useState } from 'react';
 import { usePapeletas } from '../../hooks/usePapeletas';
 import PapeletasList from '../../components/PapeletasList/PapeletasList';
-import Buscador from '../../components/Buscador/Buscador';
-import { useState } from 'react';
+import PapeletaForm from '../../components/PapeletaForm/PapeletaForm';
+import { crearPapeleta } from '../../services/papeletaService';
+import './PapeletasPage.css';
 
 export default function PapeletasPage() {
   const { papeletas, loading, error } = usePapeletas();
-  const [filtro, setFiltro] = useState('');
+  const [showForm, setShowForm] = useState(false);
 
-  const papeletasFiltradas = papeletas.filter(p =>
-    p.color.toLowerCase().includes(filtro.toLowerCase())
-  );
+  const handleSaved = async (nuevaPapeleta) => {
+    try {
+      await crearPapeleta(nuevaPapeleta);
+      setShowForm(false);     
+    } catch (err) {
+      console.error(err);
+      alert('Error al crear papeleta');
+    }
+  };
 
   if (loading) return <p>Cargando…</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
     <div className="papeletas-container">
-      <Buscador
-        placeholder="Buscar por color..."
-        onBuscar={setFiltro}
-      />
-      <PapeletasList papeletas={papeletasFiltradas} />
+     
+
+      <button className="boton" onClick={() => setShowForm(true)} >
+        ➕ Agregar Papeleta
+      </button>
+
+      {showForm && (
+        <PapeletaForm
+          onSaved={handleSaved}
+          onClose={() => setShowForm(false)}
+        />
+      )}
+
+      <PapeletasList papeletas={papeletas} />
     </div>
   );
 }
