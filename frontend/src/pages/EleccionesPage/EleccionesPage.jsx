@@ -6,7 +6,7 @@ import { deleteEleccion } from '../../services/eleccionService';
 import './EleccionesPage.css';
 
 export default function EleccionesPage() {
-  const { elecciones, loading, error } = useElecciones();
+  const { elecciones, setElecciones, loading, error } = useElecciones();
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [eleccionEditando, setEleccionEditando] = useState(null);
 
@@ -20,14 +20,22 @@ export default function EleccionesPage() {
     setMostrarFormulario(true);
   };
 
+  const handleSaved = (eleccionGuardada) => {
+    setElecciones(prev => {
+      const existe = prev.some(e => e.id === eleccionGuardada.id);
+      return existe
+        ? prev.map(e => e.id === eleccionGuardada.id ? eleccionGuardada : e)
+        : [...prev, eleccionGuardada];
+    });
+  };
+
   const handleDelete = async (id) => {
     const confirmar = window.confirm("¿Estás seguro de que querés eliminar esta elección?");
     if (!confirmar) return;
 
     try {
       await deleteEleccion(id);
-      alert("Elección eliminada correctamente");
-      window.location.reload();
+      setElecciones(prev => prev.filter(e => e.id !== id));
     } catch (error) {
       alert("Error al eliminar: " + error.message);
     }
@@ -38,12 +46,13 @@ export default function EleccionesPage() {
 
   return (
     <div className='elecciones-container'>
-      <button className= "boton" onClick={abrirFormularioNuevo}>➕ Agregar Elección</button>
+      <button className="boton" onClick={abrirFormularioNuevo}>➕ Agregar Elección</button>
 
       {mostrarFormulario && (
         <EleccionForm
           onClose={() => setMostrarFormulario(false)}
           eleccion={eleccionEditando}
+          onSaved={handleSaved}
         />
       )}
 
