@@ -63,14 +63,21 @@ export default function Votacion() {
         })
       });
 
-      await fetch('http://localhost:3000/votacion/secreto', {
+      await fetch('http://localhost:3000/votacion/registrarVoto', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          credencial, fecha, hora, esObservado, fueEmitido: true, idEleccion, idCircuito, idLista: seleccion
+          credencial,
+          fecha,
+          hora,
+          idEleccion,
+          idCircuito,
+          idPapeleta: seleccion === 'blanco' ? null : seleccion,
+          fueEnBlanco: seleccion === 'blanco',
+          fueAnulado: false
         })
       });
 
