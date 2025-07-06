@@ -9,6 +9,7 @@ export default function HomeAdmin() {
     bienvenida: 'Bienvenido al panel del administrador',
     circuitos: 'Gestión de Circuitos',
     elecciones: 'Gestión de Elecciones',
+    lista: 'Gestión de listas',
     papeletas: 'Gestión de Papeletas',
     partidos: 'Gestión de Partidos',
     votantes: 'Gestión de Votantes',

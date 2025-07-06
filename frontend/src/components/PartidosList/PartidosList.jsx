@@ -9,8 +9,7 @@ export default function PartidosList({ partidos }) {
           <p><strong>Nombre:</strong> {p.nombre}</p>
           <p><strong>Dirección:</strong> {p.direccion}</p>
           <p><strong>Autoridades:</strong> {p.autoridades}</p>
-          <p><strong>ID Papeleta:</strong> {p.idPapeleta}</p>
-        </li>
+          </li>
       ))}
     </ul>
   );
