@@ -1,37 +1,41 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createCircuito, updateCircuito } from '../../services/circuitoService';
+import { vincularCircuitoAEleccion } from '../../services/eleccionCircuitoService';
 import './CircuitoForm.css';
-import { useEffect } from 'react';
-import { vincularCircuitoAEleccion } from '../../services/eleccionCircuitoService'
 
 export default function CircuitoForm({ onClose, onSaved, circuito }) {
-
-  useEffect(() => {
-    setForm({
-
-      zona: circuito?.zona || '',
-      tipo: circuito?.tipo || '',
-      accesible: circuito?.accesible || false,
-      direccion: circuito?.direccion || '',
-      idEstablecimiento: circuito?.idEstablecimiento || '',
-      idDepartamento: circuito?.idDepartamento || '',
-    });
-  }, [circuito]);
-
+  const isEditing = Boolean(circuito);
 
   const [form, setForm] = useState({
-
     zona: '',
     tipo: '',
     accesible: false,
     direccion: '',
     idEstablecimiento: '',
     idDepartamento: '',
-
+    idMesa: '',
+    ciAgente: '',
+    idEleccion: ''
   });
 
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (circuito) {
+      setForm({
+        zona: circuito.zona || '',
+        tipo: circuito.tipo || '',
+        accesible: circuito.accesible || false,
+        direccion: circuito.direccion || '',
+        idEstablecimiento: circuito.idEstablecimiento || '',
+        idDepartamento: circuito.idDepartamento || '',
+        idMesa: '', // no lo cargues en edición
+        ciAgente: '',
+        idEleccion: ''
+      });
+    }
+  }, [circuito]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,7 +50,6 @@ export default function CircuitoForm({ onClose, onSaved, circuito }) {
     setMensaje('');
     setError('');
 
-    // Validaciones básicas
     if (!form.zona || !form.tipo || !form.direccion) {
       setError('Por favor, completá todos los campos obligatorios.');
       return;
@@ -55,27 +58,17 @@ export default function CircuitoForm({ onClose, onSaved, circuito }) {
     try {
       let response;
 
-
-      if (circuito) {
+      if (isEditing) {
         await updateCircuito(circuito.id, form);
-
         setMensaje('✅ Circuito actualizado correctamente.');
       } else {
         response = await createCircuito(form);
-
-        setMensaje('✅ Circuito creado correctamente.');
-
-        console.log("Respuesta de createCircuito:", response);
-
         await vincularCircuitoAEleccion(form.idEleccion, response.id, form.idMesa, form.ciAgente, false);
+        setMensaje('✅ Circuito creado correctamente.');
       }
 
-
-      // Actualizar lista sin recargar
-      onSaved?.({ ...form, id: response.id || circuito?.id }); // id puede venir en la respuesta
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      onSaved?.({ ...form, id: response?.id || circuito?.id });
+      setTimeout(() => onClose(), 1500);
     } catch (err) {
       setError('⚠ Error: ' + err.message);
     }
@@ -83,49 +76,50 @@ export default function CircuitoForm({ onClose, onSaved, circuito }) {
 
   return (
     <form onSubmit={handleSubmit} className="formulario-circuito">
-      <h3>{circuito ? 'Editar Circuito' : 'Nuevo Circuito'}</h3>
+      <h3>{isEditing ? 'Editar Circuito' : 'Nuevo Circuito'}</h3>
 
       {mensaje && <p className="mensaje-exito">{mensaje}</p>}
       {error && <p className="mensaje-error">{error}</p>}
 
-      <label>
-        Zona:
+      <label>Zona:
         <input name="zona" value={form.zona} onChange={handleChange} required />
       </label>
 
-      <label>
-        Tipo:
+      <label>Tipo:
         <input name="tipo" value={form.tipo} onChange={handleChange} required />
       </label>
 
-      <label>
-        Accesible:
+      <label>Accesible:
         <input type="checkbox" name="accesible" checked={form.accesible} onChange={handleChange} />
       </label>
 
-      <label>
-        Dirección:
+      <label>Dirección:
         <input name="direccion" value={form.direccion} onChange={handleChange} required />
       </label>
 
-      <label>
-        Establecimiento (ID):
+      <label>Establecimiento (ID):
         <input name="idEstablecimiento" value={form.idEstablecimiento} onChange={handleChange} />
       </label>
 
-      <label>
-        Departamento (ID):
+      <label>Departamento (ID):
         <input name="idDepartamento" value={form.idDepartamento} onChange={handleChange} />
       </label>
-      <label>Mesa (ID):
-        <input name="idMesa" value={form.idMesa} onChange={handleChange} />
-      </label>
-      <label>CI Agente:
-        <input name="ciAgente" value={form.ciAgente} onChange={handleChange} />
-      </label>
-      <label>ID Elección:
-        <input name="idEleccion" value={form.idEleccion} onChange={handleChange} />
-      </label>
+
+      {!isEditing && (
+        <>
+          <label>Mesa (ID):
+            <input name="idMesa" value={form.idMesa} onChange={handleChange} required />
+          </label>
+
+          <label>CI Agente:
+            <input name="ciAgente" value={form.ciAgente} onChange={handleChange} required />
+          </label>
+
+          <label>ID Elección:
+            <input name="idEleccion" value={form.idEleccion} onChange={handleChange} required />
+          </label>
+        </>
+      )}
 
       <div className="botones-formulario">
         <button type="submit">Guardar</button>
