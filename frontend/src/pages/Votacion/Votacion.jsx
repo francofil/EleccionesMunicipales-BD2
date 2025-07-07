@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import { obtenerListasPorEleccion } from '../../services/listaService';
 import './Votacion.css';
+//import {jwtDecode} from 'jwt-decode';
 
 export default function Votacion() {
   const [listas, setListas] = useState([]);
@@ -15,19 +17,38 @@ export default function Votacion() {
       const token = localStorage.getItem('token');
       if (!token) return;
 
+      
       try {
+        /*const tokenDecoded = jwtDecode(token);
+        const credencial = tokenDecoded.credencial;*/
+
         const credencial = localStorage.getItem('credencial');
         if (!credencial) throw new Error('Credencial no encontrada');
 
-        const resAsignacion = await fetch(`http://localhost:3000/votacion/asignacion/${credencial}`, {
+        const resAsignacion = await fetch(`http://localhost:3000/votantes/asignacion/${credencial}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        
+        if (!resAsignacion.ok) throw new Error('No se encontró la asignación');
+
         const { idEleccion, idCircuito } = await resAsignacion.json();
 
         localStorage.setItem('idEleccion', idEleccion);
         localStorage.setItem('idCircuito', idCircuito);
 
-        const resListas = await fetch(`http://localhost:3000/listasDisponibles/${idEleccion}/${idCircuito}`, {
+        const listasData = await obtenerListasPorEleccion(idEleccion);
+        const listasUnicas = listasData.filter((lista, index, self) =>
+          index === self.findIndex((l) => l.idLista === lista.idLista)
+        );
+        console.log('Listas obtenidas:', listasUnicas);
+
+        setListas(listasUnicas);
+      } catch (err) {
+        console.error('Error al obtener datos para la votación', err);
+      } finally {
+        setLoading(false);
+      }
+        /*const resListas = await fetch(`http://localhost:3000/listasDisponibles/${idEleccion}/${idCircuito}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const dataListas = await resListas.json();
@@ -36,7 +57,7 @@ export default function Votacion() {
         console.error('Error al obtener datos para la votación', err);
       } finally {
         setLoading(false);
-      }
+      }*/
     };
 
     fetchDatos();
@@ -106,7 +127,7 @@ export default function Votacion() {
                 checked={seleccion === lista.idLista}
                 onChange={() => setSeleccion(lista.idLista)}
               />
-              <label htmlFor={`lista-${lista.idLista}`}>{lista.nombre}</label>
+              <label htmlFor={`lista-${lista.idLista}`}>{lista.organo} - {lista.departamento}</label>
             </div>
           ))}
           <div className="opcion-lista">

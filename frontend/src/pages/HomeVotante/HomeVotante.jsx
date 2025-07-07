@@ -47,12 +47,23 @@ export default function HomeVotante() {
         const { idEleccion, idCircuito } = asignacion;
 
         // 2. Estado del voto
-        const resVoto = await fetch(`http://localhost:3000/votantes/estado/${credencial}/${idEleccion}/${idCircuito}`);
-        if (!resVoto.ok) throw new Error('No se encontró el estado del voto');
-        const voto = await resVoto.json();
+        let voto = { fueEmitido: false, esObservado: false }; // valor por defecto
+        try {
+          const resVoto = await fetch(`http://localhost:3000/votantes/estado/${credencial}/${idEleccion}/${idCircuito}`);
+          if (resVoto.ok) {
+            voto = await resVoto.json();
+            console.log('Estado del voto:', voto);
+          } else if (resVoto.status === 404) {
+            console.warn('No hay estado del voto: se asume no emitido.');
+          } else {
+            throw new Error('Error inesperado al consultar estado del voto');
+          }
+        } catch (err) {
+          console.error('Error consultando estado del voto:', err);
+        }
         setEstadoVoto(voto);
-        console.log('Estado del voto:', voto);
 
+        
         // 3. Estado de la mesa
         const resMesa = await fetch(`http://localhost:3000/eleccionCircuito/estadoMesa/${idEleccion}/${idCircuito}`);
         if (!resMesa.ok) throw new Error('No se encontró el estado de la mesa');
