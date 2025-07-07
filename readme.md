@@ -73,17 +73,6 @@ DB_NAME=eleccionesMunicipales
 PORT=3000
 ```
 
-Sino tenes la opción de conectarete a la bdd del servidor de la UCU con las siguientes credenciales
-```
-DB_HOST=mysql.reto-ucu-net
-DB_PORT=50006
-DB_USER=fv_g3_admin
-DB_PASS=Bd2025!
-DB_NAME=FV_Grupo3
-PORT=3000
-```
----
-
 ### 💻 Frontend
 
 ```bash
@@ -98,12 +87,12 @@ npm run dev
 
 ## Conexión a base de datos externa (opcional)
 
-Puedes conectarte a la base de datos remota de la universidad con:
+la otra opciond de conexion es de manera remota al servidor de la UCU:
 
 - Host: `mysql.reto-ucu.net`
 - Puerto: `50006`
-- Usuario: `fv_gX_admin` (reemplazar X por número de grupo)
-- Base: `FV_GrupoX`
+- Usuario: `fv_g3_admin` 
+- Base: `FV_Grupo3`
 - Contraseña: `Bd2025!`
 
 ---
