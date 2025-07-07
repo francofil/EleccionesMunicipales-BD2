@@ -96,7 +96,7 @@ export default function Votacion() {
           hora,
           idEleccion,
           idCircuito,
-          idPapeleta: seleccion === 'blanco' ? null : seleccion,
+          idPapeleta: seleccion === 'blanco' ? null : parseInt(seleccion),
           fueEnBlanco: seleccion === 'blanco',
           fueAnulado: false
         })
@@ -125,7 +125,8 @@ export default function Votacion() {
                 name="opcion"
                 value={lista.idLista}
                 checked={seleccion === lista.idLista}
-                onChange={() => setSeleccion(lista.idLista)}
+                onChange={() => {console.log('Seleccionando: ', lista.idLista);
+                setSeleccion(lista.idLista)}}
               />
               <label htmlFor={`lista-${lista.idLista}`}>{lista.organo} - {lista.departamento}</label>
             </div>
@@ -137,7 +138,8 @@ export default function Votacion() {
               name="opcion"
               value="blanco"
               checked={seleccion === 'blanco'}
-              onChange={() => setSeleccion('blanco')}
+              onChange={() => { console.log('Seleccionando: Blanco');
+              setSeleccion('blanco')}}
             />
             <label htmlFor="blanco">Voto en blanco</label>
           </div>
@@ -153,7 +155,7 @@ export default function Votacion() {
           <div className="btn-confirmar-container">
             <button
               onClick={emitirVoto}
-              disabled={!seleccion}
+              disabled={seleccion === null}
               className="btn-confirmar"
             >
               Confirmar Voto
