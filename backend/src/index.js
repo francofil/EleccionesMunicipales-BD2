@@ -21,7 +21,7 @@ const papeletasRoutes = require('./routes/papeleta.router.js');
 const presidenteRoutes = require('./routes/presidente.router');
 const partidoRoutes = require('./routes/partido.router.js')
 const listaRoutes =require('./routes/lista.router.js')
-
+const resultadosRoutes = require('./routes/resultados.router.js')
 app.use('/votantes', votantesRoutes);
 app.use('/auth', authRoutes);
 app.use('/circuito', circuitoRoutes);
@@ -32,6 +32,7 @@ app.use('/eleccion', eleccionRoutes);
 app.use('/presidente', presidenteRoutes);
 app.use('/partido',partidoRoutes);
 app.use('/lista', listaRoutes);
+app.use('/resultados', resultadosRoutes)
 
 const PORT = process.env.PORT || 3000;
 

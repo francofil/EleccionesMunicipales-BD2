@@ -1,16 +1,13 @@
-import './ResultadosPage.css';
-import { useState, useEffect} from 'react';
-
-export default function ResultadosPage({ resultados, circuito, estadoMesa }) {
+import { useState } from 'react';
+import { useResultados } from '../../hooks/useResultados';
+import ResultadosList from '../../components/ResultadosList/ResultadosList';
+import { cambiarEstadoMesa } from '../../services/eleccionCircuitoService';
+import './ResultadosPage.css'
+export default function ResultadosPage() {
   const [cerrando, setCerrando] = useState(false);
-  const [cerrada, setCerrada] = useState(estadoMesa?.mesaCerrada || false);
-  const [datos, setDatos] = useState(resultados || []);
-  const token = localStorage.getItem('token');
-
-   useEffect(() => {
-    if (estadoMesa?.mesaCerrada) setCerrada(true);
-    if (resultados) setDatos(resultados);
-  }, [estadoMesa, resultados]);
+  const [trigger, setTrigger] = useState(0);
+  const { resultados, listaMasVotada, votosPorPartido, loading, error, circuito, estadoMesa } = useResultados(trigger);
+  const cerrada = estadoMesa?.mesaCerrada;
 
   const cerrarMesa = async () => {
     if (!circuito?.idEleccion || !circuito?.idCircuito) {
@@ -18,28 +15,16 @@ export default function ResultadosPage({ resultados, circuito, estadoMesa }) {
       return;
     }
 
-  setCerrando(true);
-  try {
-    const res = await fetch(`http://localhost:3000/votacion/cerrarMesa/${circuito.idEleccion}/${circuito.idCircuito}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!res.ok) throw new Error('No se pudo cerrar la mesa');
-
-    const nuevosResultados = await res.json();
-        setDatos(nuevosResultados);
-        setCerrada(true);
-        } catch (error) {
-        alert('Error al cerrar la mesa: ' + error.message);
-        } finally {
-        setCerrando(false);
-        }
-    };
-
+    setCerrando(true);
+    try {
+      await cambiarEstadoMesa(circuito.idEleccion, circuito.idCircuito, true);
+      setTrigger(t => t + 1);  // refrescar datos
+    } catch (error) {
+      alert('Error al cerrar la mesa: ' + error.message);
+    } finally {
+      setCerrando(false);
+    }
+  };
 
   return (
     <div className="resultados-container">
@@ -63,22 +48,47 @@ export default function ResultadosPage({ resultados, circuito, estadoMesa }) {
       )}
 
       {cerrada && (
-        <div className="lista-resultados">
-          {datos.length === 0 ? (
-            <p className="mensaje-info">No hay votos registrados aún.</p>
-          ) : (
-            <ul>
-              {datos.map((r, i) => (
-                <li key={i} className="resultado-item">
-                  <strong>Lista {r.nombreLista}</strong>: {r.votos} voto(s)
-                  {r.votosObservados > 0 && (
-                    <span className="observados"> (Observados: {r.votosObservados})</span>
-                  )}
-                </li>
-              ))}
-            </ul>
+        <>
+          {loading && <p className="mensaje-info">Cargando resultados...</p>}
+          {error && <p className="mensaje-error">⚠ Error: {error}</p>}
+
+          {!loading && !error && (
+            <>
+              {/* Lista más votada */}
+{listaMasVotada && (
+  <ul className="resultados-list">
+    <li className="resultados-item">
+      <h2>Lista Más Votada</h2>
+      <p>{listaMasVotada.partido || listaMasVotada.nombreLista || 'Desconocida'}</p>
+    </li>
+  </ul>
+)}
+
+{/* Votos por partido */}
+{votosPorPartido.length > 0 && (
+  <ul className="resultados-list">
+    <h2>Votos por Partido</h2>
+    {votosPorPartido.map((vp, i) => (
+      <li key={i} className="resultados-item">
+        {vp.partido}: {vp.votos || vp.cantidad} votos
+      </li>
+    ))}
+  </ul>
+)}
+
+
+              {/* Resultados detallados por candidato */}
+              {resultados.length > 0 ? (
+                <div className="lista-resultados">
+                  <h2>Resultados Detallados</h2>
+                  <ResultadosList resultados={resultados} />
+                </div>
+              ) : (
+                <p>No hay votos registrados aún.</p>
+              )}
+            </>
           )}
-        </div>
+        </>
       )}
     </div>
   );

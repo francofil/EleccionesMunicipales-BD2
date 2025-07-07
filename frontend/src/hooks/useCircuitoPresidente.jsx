@@ -17,7 +17,7 @@ export function useCircuitoPresidente() {
 
     (async () => {
       try {
-        // Ahora el backend devuelve todo: datos del circuito + idEleccion + idMesa
+        
         const circuitoCompleto = await obtenerCircuitoDelPresidente(ci);
         setCircuito({
           id:         circuitoCompleto.idCircuito,

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/votacion.controller.js"); // o resultados.controller.js
+const controller = require("../controllers/restultados.controller.js"); // o resultados.controller.js
 
 // Ejemplo de uso: /resultados/lista-mas-votada?idEleccion=1&idCircuito=2
 router.get("/lista-mas-votada", controller.getListaMasVotada);
@@ -9,6 +9,6 @@ router.get("/lista-mas-votada", controller.getListaMasVotada);
 router.get("/votos-por-partido", controller.getVotosPorPartido);
 
 // 3. Resultados por circuito (elección + circuito)
-router.get('/resultadosCircuito/:idEleccion/:idCircuito', votacionController.getResultadosPorCircuito);
+router.get('/resultadosCircuito/:idEleccion/:idCircuito', controller.getResultadosPorCircuito);
 
 module.exports = router;
