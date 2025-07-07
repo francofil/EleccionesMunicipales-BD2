@@ -26,3 +26,13 @@ export async function obtenerListasPorEleccion(idEleccion) {
   if (!res.ok) throw new Error(await res.text());
   return await res.json(); // [{ id, organo, departamento, color, partidoNombre }]
 }
+
+
+export async function obtenerListasDisponibles(idEleccion, idCircuito) {
+  const res = await fetch(`${baseUrl}/listasDisponibles/${idEleccion}/${idCircuito}`, {
+    headers: authHeaders()
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+  return await res.json();
+}
