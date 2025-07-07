@@ -1,7 +1,4 @@
-
-DROP DATABASE IF EXISTS eleccionesMunicipales;
-CREATE DATABASE IF NOT EXISTS eleccionesMunicipales;
-USE eleccionesMunicipales;
+USE FV_Grupo3;
 
 -- Tabla Departamento
 CREATE TABLE Departamento (
@@ -184,16 +181,17 @@ CREATE TABLE Votante_Circuito_Eleccion (
 -- Tabla Voto
 CREATE TABLE Voto (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    idEleccion INT NOT NULL,
-    idCircuito INT NOT NULL,
-    idPapeleta INT NULL,
-    fueEnBlanco BOOLEAN DEFAULT FALSE,
-    fueAnulado BOOLEAN DEFAULT FALSE,
-    fecha DATE NOT NULL,
+    idEleccion INT,
+    idCircuito INT,
+    idpapeleta INT,
+    fueEnBlanco BOOLEAN,
+    fueAnulado BOOLEAN,
+    fecha DATE,
     FOREIGN KEY (idEleccion) REFERENCES Eleccion(id),
     FOREIGN KEY (idCircuito) REFERENCES Circuito(id),
     FOREIGN KEY (idPapeleta) REFERENCES Papeleta(id)
 );
+
 
 
 -- Elección presidencial
@@ -460,3 +458,43 @@ VALUES ('300003', 'C3000', 'CandidatoAzul', 'ApAzul', '1970-01-01');
 INSERT INTO Candidato (ci, idPartido) VALUES ('300003', 3);
 
 SELECT * FROM ListaVotacion_Circuito_Eleccion WHERE credencial = 'A200000';
+
+
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
+VALUES ('20000030', 'A200030', 'Nombre30', 'Apellido30', '1991-04-26');
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
+VALUES ('20000031', 'A200031', 'Nombre31', 'Apellido31', '1991-04-26');
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
+VALUES ('20000032', 'A200032', 'Nombre32', 'Apellido32', '1991-04-26');
+
+INSERT INTO ListaVotacion_Circuito_Eleccion (idEleccion, idCircuito, credencial)
+VALUES (1, 1, 'A200032');
+INSERT INTO Votante_Circuito_Eleccion (credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito)
+VALUES ('A200030', '2025-10-27', '18:00:00', FALSE, FALSE, 1, 1);
+INSERT INTO Votante_Circuito_Eleccion (credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito)
+VALUES ('A200031', '2025-10-27', '19:00:00', FALSE, FALSE, 1, 1);
+INSERT INTO Votante_Circuito_Eleccion (credencial, fecha, hora, esObservado, fueEmitido, idEleccion, idCircuito)
+VALUES ('A200032', '2025-10-27', '20:00:00', FALSE, FALSE, 1, 1);
+
+-- Voto válido al Partido Rojo (Papeleta 1)
+INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+VALUES (1, 1, 1, FALSE, FALSE, '2025-10-27');
+
+
+-- Voto válido al Partido Verde (Papeleta 2)
+INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+VALUES (1, 1, 2, FALSE, FALSE, '2025-10-27');
+
+-- Voto válido al Partido Azul (Papeleta 3)
+INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+VALUES (1, 1, 3, FALSE, FALSE, '2025-10-27');
+
+-- Voto en blanco
+INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+VALUES (1, 1, NULL, TRUE, FALSE, '2025-10-27');
+
+-- Voto anulado
+INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+VALUES (1, 1, NULL, FALSE, TRUE, '2025-10-27');
+INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
+VALUES (1, 1, 2, FALSE, FALSE, '2025-10-27');
