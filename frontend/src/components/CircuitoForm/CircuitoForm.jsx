@@ -30,7 +30,7 @@ export default function CircuitoForm({ onClose, onSaved, circuito }) {
         direccion: circuito.direccion || '',
         idEstablecimiento: circuito.idEstablecimiento || '',
         idDepartamento: circuito.idDepartamento || '',
-        idMesa: '', // no lo cargues en edición
+        idMesa: '', 
         ciAgente: '',
         idEleccion: ''
       });
