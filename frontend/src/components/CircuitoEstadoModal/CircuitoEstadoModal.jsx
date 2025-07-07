@@ -24,6 +24,8 @@ export default function CircuitoEstadoModal({ idEleccion, circuito, onClose }) {
         const list = await obtenerVotantesHabilitados(idEleccion, circuito.id);
         setEstado(est.mesaCerrada ? 'cerrado' : 'abierto');
         setHabilitados(list);
+         circuito.idMesa = est.idMesa;
+      circuito.ciAgente = est.ciAgente;
         setMsg({ type: '', text: '' });
       } catch (e) {
         setMsg({ type: 'error', text: e.message });
