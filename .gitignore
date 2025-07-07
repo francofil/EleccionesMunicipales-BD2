@@ -1,6 +1,5 @@
 # Node.js backend
 /backend/node_modules
-/backend/.env
 /backend/.DS_Store
 /backend/dist
 /backend/build
