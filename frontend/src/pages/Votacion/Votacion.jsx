@@ -14,10 +14,8 @@ export default function Votacion() {
 
   useEffect(() => {
     const fetchDatos = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) return;
+    
 
-      
       try {
         /*const tokenDecoded = jwtDecode(token);
         const credencial = tokenDecoded.credencial;*/
@@ -25,9 +23,7 @@ export default function Votacion() {
         const credencial = localStorage.getItem('credencial');
         if (!credencial) throw new Error('Credencial no encontrada');
 
-        const resAsignacion = await fetch(`http://localhost:3000/votantes/asignacion/${credencial}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const resAsignacion = await fetch(`http://localhost:3000/votantes/asignacion/${credencial}`);
         
         if (!resAsignacion.ok) throw new Error('No se encontró la asignación');
 
@@ -37,12 +33,13 @@ export default function Votacion() {
         localStorage.setItem('idCircuito', idCircuito);
 
         const listasData = await obtenerListasPorEleccion(idEleccion);
-        const listasUnicas = listasData.filter((lista, index, self) =>
-          index === self.findIndex((l) => l.idLista === lista.idLista)
-        );
-        console.log('Listas obtenidas:', listasUnicas);
+        console.log('Listas obtenidas:', listasData);
+        //const listasUnicas = listasData.filter((lista, index, self) =>
+        //  index === self.findIndex((l) => l.idLista === lista.idLista)
+        //);
+        console.log('Listas obtenidas:', listasData);
 
-        setListas(listasUnicas);
+        setListas(listasData);
       } catch (err) {
         console.error('Error al obtener datos para la votación', err);
       } finally {
@@ -64,7 +61,6 @@ export default function Votacion() {
   }, []);
 
   const emitirVoto = async () => {
-    const token = localStorage.getItem('token');
     const credencial = localStorage.getItem('credencial');
     const idEleccion = localStorage.getItem('idEleccion');
     const idCircuito = localStorage.getItem('idCircuito');
@@ -76,8 +72,7 @@ export default function Votacion() {
       await fetch('http://localhost:3000/votacion/emitir', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           credencial, fecha, hora, esObservado, fueEmitido: true, idEleccion, idCircuito
@@ -88,7 +83,6 @@ export default function Votacion() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           credencial,
@@ -118,17 +112,17 @@ export default function Votacion() {
       <div className="votacion-main">
         <div className="votacion-panel">
           {listas.map(lista => (
-            <div key={lista.idLista} className="opcion-lista">
+            <div key={lista.id} className="opcion-lista">
               <input
                 type="radio"
-                id={`lista-${lista.idLista}`}
+                id={`lista-${lista.id}`}
                 name="opcion"
-                value={lista.idLista}
-                checked={seleccion === lista.idLista}
-                onChange={() => {console.log('Seleccionando: ', lista.idLista);
-                setSeleccion(lista.idLista)}}
+                value={lista.id}
+                checked={seleccion === lista.id}
+                onChange={() => {console.log('Seleccionando: ', lista.id);
+                setSeleccion(lista.id)}}
               />
-              <label htmlFor={`lista-${lista.idLista}`}>{lista.organo} - {lista.departamento}</label>
+              <label htmlFor={`lista-${lista.id}`}>{lista.partidoNombre} - Color de la lista: {lista.color}</label>
             </div>
           ))}
           <div className="opcion-lista">
