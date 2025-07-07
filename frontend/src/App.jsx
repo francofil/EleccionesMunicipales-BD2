@@ -14,7 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Register />} />
-        <Route path="/loginVotante" element={<LoginVotante />} />
+        <Route path="/" element={<LoginVotante />} />
         <Route path="/homePresidente" element={<HomePresidente />} />
         <Route path="/homeAdmin" element={<HomeAdmin />} />
         <Route path="/homeVotante" element={<HomeVotante />} />

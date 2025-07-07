@@ -1,4 +1,6 @@
-USE FV_Grupo3;
+DROP DATABASE IF EXISTS eleccionesmunicipales;
+CREATE DATABASE IF NOT EXISTS eleccionesmunicipales;
+USE eleccionesmunicipales;
 
 -- Tabla Departamento
 CREATE TABLE Departamento (
@@ -191,8 +193,6 @@ CREATE TABLE Voto (
     FOREIGN KEY (idCircuito) REFERENCES Circuito(id),
     FOREIGN KEY (idPapeleta) REFERENCES Papeleta(id)
 );
-
-
 
 -- Elección presidencial
 INSERT INTO Eleccion (id, fecha, tipo) VALUES (1, '2025-10-27', 'Presidencial');
@@ -459,7 +459,6 @@ INSERT INTO Candidato (ci, idPartido) VALUES ('300003', 3);
 
 SELECT * FROM ListaVotacion_Circuito_Eleccion WHERE credencial = 'A200000';
 
-
 INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
 VALUES ('20000030', 'A200030', 'Nombre30', 'Apellido30', '1991-04-26');
 INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
@@ -480,7 +479,6 @@ VALUES ('A200032', '2025-10-27', '20:00:00', FALSE, FALSE, 1, 1);
 INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
 VALUES (1, 1, 1, FALSE, FALSE, '2025-10-27');
 
-
 -- Voto válido al Partido Verde (Papeleta 2)
 INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
 VALUES (1, 1, 2, FALSE, FALSE, '2025-10-27');
@@ -498,3 +496,31 @@ INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, f
 VALUES (1, 1, NULL, FALSE, TRUE, '2025-10-27');
 INSERT INTO Voto (idEleccion, idCircuito, idPapeleta, fueEnBlanco, fueAnulado, fecha)
 VALUES (1, 1, 2, FALSE, FALSE, '2025-10-27');
+
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
+VALUES
+('20000033', 'A200033', 'Nombre34', 'Apellido34', '1997-04-04'),
+('20000034', 'A200034', 'Nombre35', 'Apellido35', '1996-05-05');
+
+INSERT INTO ListaVotacion_Circuito_Eleccion (idEleccion, idCircuito, credencial)
+VALUES
+(1, 2, 'A200031'),
+(1, 2, 'A200032'),
+(1, 1, 'A200033'),
+(1, 2, 'A200034');
+
+-- USUARIOS PRUEBA VOTACION
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
+VALUES
+('20000035', 'A200035', 'Nombre35', 'Apellido35', '1997-06-06'),
+('20000036', 'A200036', 'Nombre36', 'Apellido36', '1996-07-07');
+
+INSERT INTO ListaVotacion_Circuito_Eleccion (idEleccion, idCircuito, credencial)
+VALUES
+(1, 1, 'A200035'),
+(1, 1, 'A200036');
+
+-- ADMIN
+INSERT INTO Votante (ci, credencial, nombre, apellido, fecha_nacimiento)
+VALUES
+('11111111', 'A111111', 'Admin', 'Roberto', '1997-06-06')
