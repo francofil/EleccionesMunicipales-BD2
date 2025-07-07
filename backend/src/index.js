@@ -34,7 +34,7 @@ app.use('/partido',partidoRoutes);
 app.use('/lista', listaRoutes);
 app.use('/resultados', resultadosRoutes)
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 50006;
 
 //prueba conexion bdd
 (async () => {
