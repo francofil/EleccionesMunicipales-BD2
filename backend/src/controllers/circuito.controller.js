@@ -55,8 +55,20 @@ exports.update = async (req, res) => {
 
 // DELETE
 exports.remove = async (req, res) => {
-  await pool.query('DELETE FROM Circuito WHERE id = ?', [req.params.id]);
-  res.json({ message: 'Circuito eliminado' });
+  const { id } = req.params;
+
+  try {
+    await pool.query("DELETE FROM ListaVotacion_Circuito_Eleccion WHERE idCircuito = ?", [id]);
+    await pool.query("DELETE FROM Circuito_Eleccion WHERE idCircuito = ?", [id]);
+    await pool.query("DELETE FROM Votante_Circuito_Eleccion WHERE idCircuito = ?", [id]);
+    await pool.query("DELETE FROM Voto WHERE idCircuito = ?", [id]);
+    await pool.query("DELETE FROM Circuito WHERE id = ?", [id]);
+
+    res.json({ message: 'Circuito eliminado' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar el circuito' });
+  }
 };
 
 // GET todos los votantes de un circuito

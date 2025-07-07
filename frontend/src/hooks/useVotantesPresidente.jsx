@@ -1,4 +1,4 @@
-// src/hooks/useVotantesPresidente.jsx
+
 import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { obtenerCircuitoDelPresidente } from '../services/presidenteService';

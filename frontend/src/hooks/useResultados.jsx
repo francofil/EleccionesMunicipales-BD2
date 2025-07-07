@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {jwtDecode} from 'jwt-decode';  // corregí import
+import {jwtDecode} from 'jwt-decode';  
 import { obtenerCircuitoDelPresidente } from '../services/presidenteService';
 import { 
   obtenerResultadosPorCircuito, 
@@ -39,7 +39,6 @@ export function useResultados(trigger = 0) {
         setEstadoMesa(estado);
 
         if (estado.mesaCerrada) {
-          // Acá llamamos los 3 endpoints en paralelo para optimizar tiempo
           const [datosResultados, datosListaMasVotada, datosVotosPorPartido] = await Promise.all([
             obtenerResultadosPorCircuito(idEleccion, idCircuito),
             obtenerListaMasVotada(idEleccion, idCircuito),
