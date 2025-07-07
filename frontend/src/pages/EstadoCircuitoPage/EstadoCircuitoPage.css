@@ -1,0 +1,125 @@
+/* ---------- contenedor principal ---------- */
+.estado-circuito-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ---------- títulos ---------- */
+.estado-circuito-container h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.estado-circuito-container h2,
+.estado-circuito-container h3 {
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  color: #444;
+}
+
+/* ---------- etiqueta de estado ---------- */
+.estado-tag {
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.4rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.estado-tag.abierto  { background:#e8f5e9; color:#2e7d32; }
+.estado-tag.cerrado  { background:#ffebee; color:#c62828; }
+
+/* ---------- lista de habilitados ---------- */
+.lista-habilitados {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+}
+
+.lista-habilitados li {
+  padding: 0.4rem 0.6rem;
+  background-color: #f7f7f7;
+  margin-bottom: 0.3rem;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+/* ---------- verif box ---------- */
+.verif-box {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.verif-box input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* ---------- mensajes genéricos ---------- */
+.loading {
+  color: #555;
+  background-color: #eef3f9;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+.mensaje-exito {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.mensaje-error {
+  color: #c62828;
+  background-color: #ffebee;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+.boton {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease-in-out;
+  margin: 0.3rem;
+}
+
+.boton:hover {
+  background-color: #1565c0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.boton:active {
+  transform: scale(0.97);
+}
+
+.boton.volver {
+  margin-bottom: 1rem;
+  background-color: #ccc;
+  color: black;
+}
+
+

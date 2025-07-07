@@ -1,0 +1,53 @@
+.elecciones-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.eleccion-item {
+  background-color: #e3f2fd;
+  border-left: 6px solid #40a6ff;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.eleccion-item:hover {
+  background-color: #bbdefb;
+}
+
+.eleccion-item button {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.eleccion-item button:hover {
+  opacity: 0.9;
+}
+
+.eleccion-item button:nth-of-type(1) {
+  background-color: #f9a825;
+}
+
+.eleccion-item button:nth-of-type(1):hover {
+  background-color: #f57f17;
+}
+
+.eleccion-item button:nth-of-type(2) {
+  background-color: #d32f2f;
+}
+
+.eleccion-item button:nth-of-type(2):hover {
+  background-color: #c62828;
+}
