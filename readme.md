@@ -89,11 +89,11 @@ npm run dev
 
 la otra opciond de conexion es de manera remota al servidor de la UCU:
 
-- Host: `mysql.reto-ucu.net`
-- Puerto: `50006`
-- Usuario: `fv_g3_admin` 
-- Base: `FV_Grupo3`
-- Contraseña: `Bd2025!`
+- Host: `****`
+- Puerto: `****`
+- Usuario: `*****` 
+- Base: `*****`
+- Contraseña: `****`
 
 ---
 
